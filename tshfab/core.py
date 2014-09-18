@@ -12,10 +12,14 @@ from fabric.api import (
 class FabRunner(object):
     @staticmethod
     def run(*args, **kwargs):
+        if 'use_shell' not in kwargs:
+            kwargs['use_shell'] = False
         return run(*args, **kwargs)
 
     @staticmethod
     def sudo(*args, **kwargs):
+        if 'use_shell' not in kwargs:
+            kwargs['use_shell'] = False
         return sudo(*args, **kwargs)
 
 
@@ -27,6 +31,10 @@ class ProjectBaseMixin(object):
 
 
 class ReleaseManager(ProjectBaseMixin):
+    """
+
+    """
+
     def __init__(self, base, runner=None):
         """
 
@@ -45,6 +53,7 @@ class ReleaseManager(ProjectBaseMixin):
 
 
         :return:
+        :rtype: str
         """
         current = self._runner.run('readlink %s' % self._current)
         if not current:
@@ -57,6 +66,7 @@ class ReleaseManager(ProjectBaseMixin):
 
 
         :return:
+        :rtype: list
         """
         return [item.strip() for item in
                 self._runner.run('ls -1r %s' % self._releases).split()]
@@ -67,6 +77,7 @@ class ReleaseManager(ProjectBaseMixin):
 
 
         :return:
+        :rtype: str
         """
         releases = self.get_releases()
         if not releases:
@@ -90,8 +101,7 @@ class ReleaseManager(ProjectBaseMixin):
         """
 
 
-        :param release_id:
-        :return:
+        :param str release_id:
         """
         tmp_path = os.path.join(self._base, str(uuid.uuid4()))
         target = os.path.join(self._releases, release_id)
@@ -107,8 +117,7 @@ class ReleaseManager(ProjectBaseMixin):
         """
 
 
-        :param keep:
-        :return:
+        :param int keep:
         """
         releases = self.get_releases()
         current_version = self.get_current_release()
@@ -119,8 +128,53 @@ class ReleaseManager(ProjectBaseMixin):
 
 
 class ProjectSetup(ProjectBaseMixin):
-    def setup_directories(self):
-        pass
+    """
 
-    def set_permissions(self):
-        pass
+
+
+    """
+
+    def __init__(self, base, runner=None):
+        """
+
+
+
+        :param base:
+        :param runner:
+        :return:
+        """
+        super(ProjectSetup, self).__init__(base)
+        self._runner = runner if runner is not None else FabRunner()
+
+    def setup_directories(self, use_sudo=True):
+        """
+
+
+
+        :param use_sudo:
+        :return:
+        """
+        runner = self._runner.sudo if use_sudo else self._runner.run
+        for path in (self._base, self._releases):
+            runner('mkdir -p %s' % path)
+
+    def set_permissions(
+            self, owner, file_perms='u+rw,g+rw,o+r',
+            dir_perms='u+rwx,g+rws,o+rx', use_sudo=True):
+        """
+
+
+
+        :param owner:
+        :param file_perms:
+        :param dir_perms:
+        :param use_sudo:
+        :return:
+        """
+        runner = self._runner.sudo if use_sudo else self._runner.run
+        runner('chown -R %s %s' % (owner, self._base))
+
+        for path in (self._base, self._releases):
+            runner('chmod %s %s' % (dir_perms, path))
+
+        runner('chmod -R %s %s' % (file_perms, self._base))
