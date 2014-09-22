@@ -37,7 +37,7 @@ class TestReleaseManager(object):
         self.runner.run.assert_called_once_with('ls -1r /srv/test/releases')
 
     def test_get_previous_release(self):
-        def return_values(*args, **kwargs):
+        def return_values(*args):
             if args[0].startswith('readlink'):
                 res = StrDecorator('/srv/test/releases/20140921220657\n')
                 res.failed = False
@@ -54,6 +54,77 @@ class TestReleaseManager(object):
 
         assert '20140921220642' == rm.get_previous_release()
 
+    def test_get_previous_release_no_releases(self):
+        def return_values(*args):
+            if args[0].startswith('readlink'):
+                res = StrDecorator('')
+                res.failed = True
+                return res
+            if args[0].startswith('ls'):
+                res = StrDecorator('')
+                res.failed = False
+                return res
+            return None
+
+        self.runner.run.side_effect = return_values
+        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+
+        assert None is rm.get_previous_release()
+
+    def test_get_previous_release_no_current(self):
+        def return_values(*args):
+            if args[0].startswith('readlink'):
+                res = StrDecorator('')
+                res.failed = True
+                return res
+            if args[0].startswith('ls'):
+                res = StrDecorator(
+                    '20140921220657\n20140921220642\n20140921215951\n')
+                res.failed = False
+                return res
+            return None
+
+        self.runner.run.side_effect = return_values
+        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+
+        assert None is rm.get_previous_release()
+
+    def test_get_previous_release_bad_current(self):
+        def return_values(*args):
+            if args[0].startswith('readlink'):
+                res = StrDecorator('/srv/test/releases/20140921225906\n')
+                res.failed = False
+                return res
+            if args[0].startswith('ls'):
+                res = StrDecorator(
+                    '20140921220657\n20140921220642\n20140921215951\n')
+                res.failed = False
+                return res
+            return None
+
+        self.runner.run.side_effect = return_values
+        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+
+        assert None is rm.get_previous_release()
+
+    def test_get_previous_release_only_one_release(self):
+        def return_values(*args):
+            if args[0].startswith('readlink'):
+                res = StrDecorator('/srv/test/releases/20140921225906\n')
+                res.failed = False
+                return res
+            if args[0].startswith('ls'):
+                res = StrDecorator(
+                    '20140921225906\n')
+                res.failed = False
+                return res
+            return None
+
+        self.runner.run.side_effect = return_values
+        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+
+        assert None is rm.get_previous_release()
+
     def test_set_current_release(self):
         rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
         rm._set_current_release('20140921220642', rand='1234')
@@ -64,7 +135,25 @@ class TestReleaseManager(object):
             'mv -T /srv/test/1234 /srv/test/current')
 
     def test_cleanup(self):
-        pass
+        def return_values(*args):
+            if args[0].startswith('readlink'):
+                res = StrDecorator('/srv/test/releases/20140921220657\n')
+                res.failed = False
+                return res
+            if args[0].startswith('ls'):
+                res = StrDecorator(
+                    '20140921220657\n20140921220642\n20140921215951\n')
+                res.failed = False
+                return res
+            return None
+
+        self.runner.run.side_effect = return_values
+
+        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm.cleanup(keep=1)
+
+        self.runner.run.assert_any_call('rm -rf /srv/test/releases/20140921220642')
+        self.runner.run.assert_any_call('rm -rf /srv/test/releases/20140921215951')
 
 
 class TestProjectSetup(object):
@@ -100,6 +189,11 @@ class TestProjectSetup(object):
         self.runner.run.assert_any_call('chmod u+rwx,g+rws,o+rx /srv/test')
         self.runner.run.assert_any_call('chmod u+rwx,g+rws,o+rx /srv/test/releases')
         self.runner.run.assert_any_call('chmod -R u+rw,g+rw,o+r /srv/test')
+
+
+def test_split_by_line_empty_string():
+    assert [] == tshfab.core.split_by_line('')
+    assert [] == tshfab.core.split_by_line(' ')
 
 
 def test_split_by_line_no_newline():

@@ -47,6 +47,8 @@ def split_by_line(content):
     # just a single trailing \n or \n\r into multiple parts.
     stripped = content.strip()
 
+    if not stripped:
+        return []
     if '\n\r' in stripped:
         return _strip_all(stripped.split('\n\r'))
     if '\n' in stripped:
