@@ -33,8 +33,10 @@ def split_by_line(content):
     that TTY devices on POSIX systems use \n\r for newlines in
     some instances.
 
-    If the given content does not contain any newlines, it will
-    be returned as the only element in a single item list.
+    If the given content is an empty string or a string of only
+    whitespace, an empty list will be returned. If the given
+    content does not contain any newlines, it will be returned
+    as the only element in a single item list.
 
     Leading and trailing whitespace is remove from all elements
     returned.
