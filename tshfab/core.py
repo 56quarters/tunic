@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
 
+"""
+tshfab.core
+~~~~~~~~~~~
+
+Core TSH Fab functionality.
+
+:copyright: (c) 2014 TSH Labs
+:license: MIT, see LICENSE for more details.
+"""
 
 import uuid
 from datetime import datetime
