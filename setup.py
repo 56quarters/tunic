@@ -9,15 +9,19 @@ from setuptools import setup, find_packages
 import tshfab
 
 
-DESCRIPTION = 'TSH Labs Fabric Utilities'
+DESCRIPTION = 'Deployment related Fabric utilities'
 AUTHOR = 'TSH Labs'
 EMAIL = 'projects@tshlabs.org'
 URL = 'http://www.tshlabs.org/'
 LICENSE = 'MIT'
 CLASSIFIERS = [
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
     "Programming Language :: Python",
     "Programming Language :: Python :: 2.6",
-    "Programming Language :: Python :: 2.7"
+    "Programming Language :: Python :: 2.7",
+    "Topic :: System :: Installation/Setup"
 ]
 
 
