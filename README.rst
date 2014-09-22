@@ -1,10 +1,10 @@
-Tunic - Deployment related Fabric utilities
-===========================================
+Tunic
+=====
 
-**WARNING** - This is pre-alpha software and subject to change/bugs.
+**WARNING** - This is pre-alpha software and subject to changes and/or bugs.
 
-Tunic is a library built on the Fabric tool for performing common
-tasks related to deploying a code base on multiple remote servers.
+Tunic is a library built on Fabric for performing common tasks related
+to deploying a code base on multiple remote servers.
 
 It's designed so that you can make use of as much or as little of
 its functionality as you'd like, the choice is yours.
