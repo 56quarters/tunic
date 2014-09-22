@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-tshfab
-~~~~~~
+tunic
+~~~~~
 
 Deployment related Fabric utilities.
 

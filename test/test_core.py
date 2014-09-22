@@ -2,7 +2,7 @@
 import re
 
 import mock
-import tshfab.core
+import tunic.core
 
 
 class StrDecorator(str):
@@ -15,13 +15,13 @@ class StrDecorator(str):
 
 class TestReleaseManager(object):
     def setup(self):
-        self.runner = mock.Mock(spec=tshfab.core.FabRunner)
+        self.runner = mock.Mock(spec=tunic.core.FabRunner)
 
     def test_get_current_release(self):
         self.runner.run.return_value = StrDecorator('/srv/test/releases/20140921215951\n')
         self.runner.run.return_value.failed = False
 
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
 
         assert '20140921215951' == rm.get_current_release()
         self.runner.run.assert_called_once_with('readlink /srv/test/current')
@@ -31,7 +31,7 @@ class TestReleaseManager(object):
             '20140921220657\n20140921220642\n20140921215951\n')
         self.runner.run.return_value.failed = False
 
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
         assert ['20140921220657', '20140921220642', '20140921215951'] == \
                rm.get_releases()
         self.runner.run.assert_called_once_with('ls -1r /srv/test/releases')
@@ -50,7 +50,7 @@ class TestReleaseManager(object):
             return None
 
         self.runner.run.side_effect = return_values
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
 
         assert '20140921220642' == rm.get_previous_release()
 
@@ -67,7 +67,7 @@ class TestReleaseManager(object):
             return None
 
         self.runner.run.side_effect = return_values
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
 
         assert None is rm.get_previous_release()
 
@@ -85,7 +85,7 @@ class TestReleaseManager(object):
             return None
 
         self.runner.run.side_effect = return_values
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
 
         assert None is rm.get_previous_release()
 
@@ -103,7 +103,7 @@ class TestReleaseManager(object):
             return None
 
         self.runner.run.side_effect = return_values
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
 
         assert None is rm.get_previous_release()
 
@@ -121,12 +121,12 @@ class TestReleaseManager(object):
             return None
 
         self.runner.run.side_effect = return_values
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
 
         assert None is rm.get_previous_release()
 
     def test_set_current_release(self):
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
         rm._set_current_release('20140921220642', rand='1234')
 
         self.runner.run.assert_any_call(
@@ -149,7 +149,7 @@ class TestReleaseManager(object):
 
         self.runner.run.side_effect = return_values
 
-        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
         rm.cleanup(keep=1)
 
         self.runner.run.assert_any_call('rm -rf /srv/test/releases/20140921220642')
@@ -158,22 +158,22 @@ class TestReleaseManager(object):
 
 class TestProjectSetup(object):
     def setup(self):
-        self.runner = mock.Mock(spec=tshfab.core.FabRunner)
+        self.runner = mock.Mock(spec=tunic.core.FabRunner)
 
     def test_setup_directories_with_sudo(self):
-        setup = tshfab.core.ProjectSetup('/srv/test', runner=self.runner)
+        setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.setup_directories(use_sudo=True)
 
         self.runner.sudo.assert_called_once_with('mkdir -p /srv/test/releases')
 
     def test_setup_directories_no_sudo(self):
-        setup = tshfab.core.ProjectSetup('/srv/test', runner=self.runner)
+        setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.setup_directories(use_sudo=False)
 
         self.runner.run.assert_called_once_with('mkdir -p /srv/test/releases')
 
     def test_set_permissions_with_sudo(self):
-        setup = tshfab.core.ProjectSetup('/srv/test', runner=self.runner)
+        setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.set_permissions('user:group', use_sudo=True)
 
         self.runner.sudo.assert_any_call('chown -R user:group /srv/test')
@@ -182,7 +182,7 @@ class TestProjectSetup(object):
         self.runner.sudo.assert_any_call('chmod -R u+rw,g+rw,o+r /srv/test')
 
     def test_set_permissions_no_sudo(self):
-        setup = tshfab.core.ProjectSetup('/srv/test', runner=self.runner)
+        setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.set_permissions('user:group', use_sudo=False)
 
         self.runner.run.assert_any_call('chown -R user:group /srv/test')
@@ -192,35 +192,35 @@ class TestProjectSetup(object):
 
 
 def test_split_by_line_empty_string():
-    assert [] == tshfab.core.split_by_line('')
-    assert [] == tshfab.core.split_by_line(' ')
+    assert [] == tunic.core.split_by_line('')
+    assert [] == tunic.core.split_by_line(' ')
 
 
 def test_split_by_line_no_newline():
-    assert ['foobar'] == tshfab.core.split_by_line('foobar')
-    assert ['foobar'] == tshfab.core.split_by_line(' foobar ')
+    assert ['foobar'] == tunic.core.split_by_line('foobar')
+    assert ['foobar'] == tunic.core.split_by_line(' foobar ')
 
 
 def test_split_by_line_windows():
-    assert ['foo', 'bar'] == tshfab.core.split_by_line('foo\n\rbar')
-    assert ['foo', 'bar'] == tshfab.core.split_by_line(' foo\n\rbar ')
-    assert ['foo', 'bar'] == tshfab.core.split_by_line(' foo \n\r bar ')
+    assert ['foo', 'bar'] == tunic.core.split_by_line('foo\n\rbar')
+    assert ['foo', 'bar'] == tunic.core.split_by_line(' foo\n\rbar ')
+    assert ['foo', 'bar'] == tunic.core.split_by_line(' foo \n\r bar ')
 
 
 def test_split_by_line_unix():
-    assert ['foo', 'bar'] == tshfab.core.split_by_line('foo\nbar')
-    assert ['foo', 'bar'] == tshfab.core.split_by_line(' foo\nbar ')
-    assert ['foo', 'bar'] == tshfab.core.split_by_line('foo \n bar')
+    assert ['foo', 'bar'] == tunic.core.split_by_line('foo\nbar')
+    assert ['foo', 'bar'] == tunic.core.split_by_line(' foo\nbar ')
+    assert ['foo', 'bar'] == tunic.core.split_by_line('foo \n bar')
 
 
 def test_get_current_path():
-    assert '/var/www/test/current' == tshfab.core.get_current_path('/var/www/test')
+    assert '/var/www/test/current' == tunic.core.get_current_path('/var/www/test')
 
 
 def test_get_releases_path():
-    assert '/var/www/test/releases' == tshfab.core.get_releases_path('/var/www/test')
+    assert '/var/www/test/releases' == tunic.core.get_releases_path('/var/www/test')
 
 
 def test_get_release_id():
     assert re.match(
-        '[\d]+\-local', tshfab.core.get_release_id('local')) is not None
+        '[\d]+\-local', tunic.core.get_release_id('local')) is not None

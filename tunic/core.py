@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-tshfab.core
-~~~~~~~~~~~
+tunic.core
+~~~~~~~~~~
 
-Core TSH Fab functionality.
+Core Tunic functionality.
 
 :copyright: (c) 2014 TSH Labs
 :license: MIT, see LICENSE for more details.

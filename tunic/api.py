@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-tshfab.api
-~~~~~~~~~~
+tunic.api
+~~~~~~~~~
 
-Publicly exposed TSH Fab methods.
+Publicly exposed Tunic methods.
 
 :copyright: (c) 2014 TSH Labs
 :license: MIT, see LICENSE for more details.

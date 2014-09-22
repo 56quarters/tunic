@@ -5,7 +5,7 @@ from __future__ import print_function
 
 from setuptools import setup, find_packages
 
-import tshfab
+import tunic
 
 
 DESCRIPTION = 'Deployment related Fabric utilities'
@@ -37,8 +37,8 @@ REQUIRES = [
 README = get_contents('README.rst')
 
 setup(
-    name='tshfab',
-    version=tshfab.__version__,
+    name='tunic',
+    version=tunic.__version__,
     author=AUTHOR,
     description=DESCRIPTION,
     long_description=README,
