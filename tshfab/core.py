@@ -279,8 +279,7 @@ class ProjectSetup(ProjectBaseMixin):
             ``run()`` command.
         """
         runner = self._runner.sudo if use_sudo else self._runner.run
-        for path in (self._base, self._releases):
-            runner('mkdir -p %s' % path)
+        runner('mkdir -p %s' % self._releases)
 
     def set_permissions(
             self, owner, file_perms=PERMS_FILE_DEFAULT,
