@@ -218,7 +218,13 @@ class ReleaseManager(ProjectBaseMixin):
         :param str release_id: Release ID to mark as the current
             release
         """
-        tmp_path = os.path.join(self._base, str(uuid.uuid4()))
+        self._set_current_release(release_id, str(uuid.uuid4()))
+
+    def _set_current_release(self, release_id, rand):
+        # Set the current release with a specific random file
+        # name. Useful for unit testing when we need to check
+        # for the exact arguments passed to the runner mock
+        tmp_path = os.path.join(self._base, rand)
         target = os.path.join(self._releases, release_id)
 
         # First create a link with a random name to point to the

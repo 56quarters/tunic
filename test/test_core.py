@@ -55,7 +55,13 @@ class TestReleaseManager(object):
         assert '20140921220642' == rm.get_previous_release()
 
     def test_set_current_release(self):
-        pass
+        rm = tshfab.core.ReleaseManager('/srv/test', runner=self.runner)
+        rm._set_current_release('20140921220642', rand='1234')
+
+        self.runner.run.assert_any_call(
+            'ln -s /srv/test/releases/20140921220642 /srv/test/1234')
+        self.runner.run.assert_any_call(
+            'mv -T /srv/test/1234 /srv/test/current')
 
     def test_cleanup(self):
         pass
