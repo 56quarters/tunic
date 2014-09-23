@@ -16,12 +16,17 @@ from the Python Package Index (PyPI) using the pip tool like so. ::
 
 You could then make use of it in your deploy process like so. ::
 
-    from tunic.api import ReleaseManager
+    from fabric.api import task
+    from tunic.api import get_release_id, ReleaseManager
 
-    stop_my_app()
-    rm = ReleaseManager('/srv/www/mysite')
-    rm.set_current_release('20141002231442')
-    start_my_app()
+    @task
+    def deploy():
+        stop_my_app()
+        release = get_release_id()
+        install_my_app(release)
+        rm = ReleaseManager('/srv/www/mysite')
+        rm.set_current_release(release)
+        start_my_app()
 
 The above snippet is just the start, take a look around the code base
 for more methods that can save you work in your deploy process.
