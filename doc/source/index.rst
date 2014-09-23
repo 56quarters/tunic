@@ -1,12 +1,12 @@
 .. Tunic documentation master file, created by
-sphinx-quickstart on Mon Sep 22 21:26:34 2014.
-You can adapt this file completely to your liking, but it should at least
-contain the root `toctree` directive.
+   sphinx-quickstart on Mon Sep 22 21:26:34 2014.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
 .. NOTE: Copied from README.rst, keep in sync.
-Copied because github won't execute include directives so
-having the README.rst just include some common text file
-isn't an option.
+   Copied because github won't execute include directives so
+   having the README.rst just include some common text file
+   isn't an option.
 
 Tunic
 =====
