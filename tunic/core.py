@@ -18,10 +18,20 @@ import uuid
 from datetime import datetime
 
 import os.path
-from fabric.api import (
-    run,
-    sudo)
 
+
+try:
+    # Fabric isn't available when our modules are imported during
+    # documentation build on readthedocs.org so ignore the error
+    # here if we are, in fact, on rtd.
+    from fabric.api import (
+        run,
+        sudo)
+except ImportError as e:
+    if os.getenv('READTHEDOCS', None) != 'True':
+        raise
+    run = lambda: None
+    sudo = lambda: None
 
 PERMS_FILE_DEFAULT = 'u+rw,g+rw,o+r'
 PERMS_DIR_DEFAULT = 'u+rwx,g+rws,o+rx'

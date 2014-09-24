@@ -119,7 +119,7 @@ html_theme = 'default'
 #html_theme_path = []
 
 import os
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+on_rtd = os.getenv('READTHEDOCS', None) == 'True'
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
