@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
+#
+# Tunic
+#
+# Copyright 2014 TSH Labs <projects@tshlabs.org>
+#
+# Available under the MIT license. See LICENSE for details.
+#
 
 """
 tunic
 ~~~~~
 
 Deployment related Fabric utilities.
-
-:copyright: (c) 2014 TSH Labs
-:license: MIT, see LICENSE for more details.
 """
 
 __version__ = '0.2.0'

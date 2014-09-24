@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
+#
+# Tunic
+#
+# Copyright 2014 TSH Labs <projects@tshlabs.org>
+#
+# Available under the MIT license. See LICENSE for details.
+#
 
 """
 tunic.api
 ~~~~~~~~~
 
 Publicly exposed Tunic methods.
-
-:copyright: (c) 2014 TSH Labs
-:license: MIT, see LICENSE for more details.
 """
 
 from .core import (
