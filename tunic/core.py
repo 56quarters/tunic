@@ -30,8 +30,8 @@ try:
 except ImportError as e:
     if os.getenv('READTHEDOCS', None) != 'True':
         raise
-    run = lambda: None
-    sudo = lambda: None
+    run = None
+    sudo = None
 
 PERMS_FILE_DEFAULT = 'u+rw,g+rw,o+r'
 PERMS_DIR_DEFAULT = 'u+rwx,g+rws,o+rx'
