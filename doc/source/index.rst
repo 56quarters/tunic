@@ -45,8 +45,9 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    api
     design
+    api
+    examples
     contributing
     changes
 
