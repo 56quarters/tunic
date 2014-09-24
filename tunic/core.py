@@ -66,6 +66,10 @@ def get_current_path(base):
     """Construct the path to the 'current release' symlink based on
     the given project base path.
 
+    Note that this function does not ensure that the 'current' symlink
+    exists or points to a valid release, it only returns the full path
+    that it should be at based on the given project base directory.
+
     :param str base: Project base directory (absolute path)
     :return: Path to the 'current' symlink
     :rtype: str
@@ -76,6 +80,10 @@ def get_current_path(base):
 def get_releases_path(base):
     """Construct the path to the directory that contains all releases
     based on the given project base path.
+
+    Note that this function does not ensure that the releases directory
+    exists, it only returns the full path that it should be at based on
+    the given project base directory.
 
     :param str base: Project base directory (absolute path)
     :return: Path to the releases directory
@@ -88,6 +96,12 @@ def get_release_id(version=None):
     """Get a unique, time-based identifier for a deployment
     that optionally, also includes some sort of version number
     or release.
+
+    If a version is supplied, the release ID will be of the form
+    '$timestamp-$version'. For example,  ``20140214231159-1.4.1``.
+
+    If the version is not supplied the release D will be of the
+    form '$timestamp'. For example, ``20140214231159``.
 
     :param str version: Version to include in the release ID
     :return: Unique name for this particular deployment

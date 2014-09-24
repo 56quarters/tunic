@@ -28,12 +28,23 @@ For this example, let's assume you're deploying your project to ``/srv/www/myapp
 
 * The directory structure under ``/srv/www/myapp`` must organized as follows. ::
 
-    /srv/www/myapp
-        /releases
-        /current
+    /
+    +-- srv
+        +-- www
+            +-- myapp
+                |-- releases
+                |   +-- 20141105123145-0.2.0
+                |   +-- 20141002231442-0.1.0
+                +-- current
 
 * The ``releases`` directory must be under your project base directory and be
   writeable by the user or group that deploys are being performed by.
+
+* Each deploy under the ``releases`` directory must be named starting with a
+  timestamp corresponding to when the deploy was done. The name for each deploy
+  will be generated for you if you use the :func:`tunic.api.get_release_id`
+  function. This is required to ensure that we can determine the time deploys
+  were done relative to each other.
 
 * ``current`` must be a symlink to the active deployment in the ``releases``
   directory. This symlink will be created for you automatically if you use the
