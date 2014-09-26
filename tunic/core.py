@@ -348,8 +348,8 @@ class ProjectSetup(ProjectBaseMixin):
             directories in the form 'u+perms,g+perms,o+perms'. Default
             is ``u+rwx,g+rws,o+rx``.
         :param bool use_sudo: If ``True``, use ``sudo()`` to change ownership
-            and permissions of the code deploy. If ``False`` try to
-            change ownership using the ``run()`` command.
+            and permissions of the code deploy. If ``False`` try to change
+            permissions using the ``run()`` command, do not change ownership.
         """
         runner = self._runner.sudo if use_sudo else self._runner.run
 
