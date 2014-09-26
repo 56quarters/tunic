@@ -185,7 +185,6 @@ class TestProjectSetup(object):
         setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.set_permissions('user:group', use_sudo=False)
 
-        self.runner.run.assert_any_call('chown -R user:group /srv/test')
         self.runner.run.assert_any_call('chmod u+rwx,g+rws,o+rx /srv/test')
         self.runner.run.assert_any_call('chmod u+rwx,g+rws,o+rx /srv/test/releases')
         self.runner.run.assert_any_call('chmod -R u+rw,g+rw,o+r /srv/test')

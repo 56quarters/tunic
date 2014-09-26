@@ -334,10 +334,10 @@ class ProjectSetup(ProjectBaseMixin):
         permissions.
 
         By default the Fabric ``sudo`` function will be used for changing
-        the owner and permissions of the code deploy. Optionally, the Fabric
-        ``run`` function may be used instead. If sudo is not used and the code
-        deploy is not already owned by the user running the command it will
-        fail.
+        the owner and permissions of the code deploy. Optionally, you can
+        pass the ``use_sudo=False`` argument to skip trying to change the
+        owner of the code deploy and to use the ``run`` function to change
+        permissions.
 
         :param str owner: User and group in the form 'owner:group' to
             set for the code deploy.
@@ -352,7 +352,9 @@ class ProjectSetup(ProjectBaseMixin):
             change ownership using the ``run()`` command.
         """
         runner = self._runner.sudo if use_sudo else self._runner.run
-        runner('chown -R %s %s' % (owner, self._base))
+
+        if use_sudo:
+            runner('chown -R %s %s' % (owner, self._base))
 
         for path in (self._base, self._releases):
             runner('chmod %s %s' % (dir_perms, path))
