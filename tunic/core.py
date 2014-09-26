@@ -350,6 +350,11 @@ class ProjectSetup(ProjectBaseMixin):
         :param bool use_sudo: If ``True``, use ``sudo()`` to change ownership
             and permissions of the code deploy. If ``False`` try to change
             permissions using the ``run()`` command, do not change ownership.
+
+        .. versionchanged:: 0.2.0
+            ``use_sudo=False`` will no longer attempt to change ownership of
+            the code deploy since this will just be a no-op or fail.
+
         """
         runner = self._runner.sudo if use_sudo else self._runner.run
 
