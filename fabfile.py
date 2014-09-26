@@ -30,5 +30,12 @@ def push():
 
 
 @task
+def push_tags():
+    local('git push --tags origin')
+    local('git push --tags github')
+    local('git push --tags bitbucket')
+
+
+@task
 def pypi():
     local('python setup.py register sdist upload')
