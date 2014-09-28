@@ -27,11 +27,14 @@ try:
     from fabric.api import (
         run,
         sudo)
+
+    from fabric.contrib.files import exists
 except ImportError as e:
     if os.getenv('READTHEDOCS', None) != 'True':
         raise
     run = None
     sudo = None
+    exists = None
 
 PERMS_FILE_DEFAULT = 'u+rw,g+rw,o+r'
 PERMS_DIR_DEFAULT = 'u+rwx,g+rws,o+rx'
@@ -43,8 +46,8 @@ _strip_all = lambda parts: [part.strip() for part in parts]
 def split_by_line(content):
     """Split the given content into a list of items by newline.
 
-    Both \n\r and \n are supported. This is done since it seems
-    that TTY devices on POSIX systems use \n\r for newlines in
+    Both \r\n and \n are supported. This is done since it seems
+    that TTY devices on POSIX systems use \r\n for newlines in
     some instances.
 
     If the given content is an empty string or a string of only
@@ -60,13 +63,13 @@ def split_by_line(content):
     :rtype: list
     """
     # Make sure we don't end up splitting a string with
-    # just a single trailing \n or \n\r into multiple parts.
+    # just a single trailing \n or \r\n into multiple parts.
     stripped = content.strip()
 
     if not stripped:
         return []
-    if '\n\r' in stripped:
-        return _strip_all(stripped.split('\n\r'))
+    if '\r\n' in stripped:
+        return _strip_all(stripped.split('\r\n'))
     if '\n' in stripped:
         return _strip_all(stripped.split('\n'))
     return _strip_all([stripped])
@@ -151,6 +154,13 @@ class FabRunner(object):
             kwargs['shell'] = False
         return sudo(*args, **kwargs)
 
+    @staticmethod
+    def exists(*args, **kwargs):
+        """Execute the Fabric :func:`fabric.contrib.files.exists` function
+        with the given args.
+        """
+        return exists(*args, **kwargs)
+
 
 class ProjectBaseMixin(object):
     """Base for setting project directories from a given
@@ -165,7 +175,11 @@ class ProjectBaseMixin(object):
         """Set the project directories based on a given root.
 
         :param str base: Project root directories.
+        :raises ValueError: If the base directory isn't specified
         """
+        if not base:
+            raise ValueError("You must specify a project base directory")
+
         self._base = base
         self._current = get_current_path(base)
         self._releases = get_releases_path(base)
@@ -178,6 +192,9 @@ class ReleaseManager(ProjectBaseMixin):
     Note that functionality for managing releases relies on them being
     named with a timestamp based prefix that allows them to be naturally
     sorted -- such as with the :func:`get_release_id` function.
+
+    See :doc:`design` for more information about the expected directory
+    structure for deployments.
     """
 
     def __init__(self, base, runner=None):
@@ -188,6 +205,7 @@ class ReleaseManager(ProjectBaseMixin):
         :param str base: Absolute path to the root of the code deploy
         :param FabRunner runner: Optional runner to use for executing
             remote commands to manage releases.
+        :raises ValueError: If the base directory isn't specified
         """
         super(ReleaseManager, self).__init__(base)
         self._runner = runner if runner is not None else FabRunner()
@@ -291,6 +309,9 @@ class ProjectSetup(ProjectBaseMixin):
     execute commands with the Fabric ``sudo`` function. This can be
     disabled by passing the ``use_sudo=False`` flag to methods that
     accept it.
+
+    See :doc:`design` for more information about the expected directory
+    structure for deployments.
     """
 
     def __init__(self, base, runner=None):
@@ -301,6 +322,7 @@ class ProjectSetup(ProjectBaseMixin):
         :param str base: Absolute path to the root of the code deploy
         :param FabRunner runner: Optional runner to use for executing
             remote commands to set up the deploy.
+        :raises ValueError: If the base directory isn't specified
         """
         super(ProjectSetup, self).__init__(base)
         self._runner = runner if runner is not None else FabRunner()

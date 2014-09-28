@@ -46,8 +46,9 @@ Contents
     :maxdepth: 2
 
     design
-    api
+    usage
     examples
+    api
     contributing
     changes
 

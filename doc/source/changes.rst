@@ -4,6 +4,13 @@ Change Log
 0.3.0 - Future release
 ----------------------
 * Test coverage improvements
+* :class:`tunic.api.ReleaseManager` and :class:`tunic.api.ProjectSetup`
+  now throw :class:`ValueError` for invalid ``base`` values in their
+  ``__init__`` methods.
+* Fix bug where we attempted to split command output by ``\n\r`` instead
+  of ``\r\n``.
+* Add :class:`tunic.api.VirtualEnvInstallation` class for performing remote
+  virtualenv installations.
 
 0.2.0 - 2014-09-26
 ------------------

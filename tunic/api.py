@@ -21,10 +21,13 @@ from .core import (
     ReleaseManager,
     ProjectSetup)
 
+from .install import VirtualEnvInstallation
+
 __all__ = [
     'get_current_path',
     'get_releases_path',
     'get_release_id',
     'ReleaseManager',
-    'ProjectSetup'
+    'ProjectSetup',
+    'VirtualEnvInstallation'
 ]
