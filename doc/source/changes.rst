@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-0.3.0 - Future release
-----------------------
+0.3.0 - 2014-09-28
+------------------
 * Test coverage improvements
 * :class:`tunic.api.ReleaseManager` and :class:`tunic.api.ProjectSetup`
   now throw :class:`ValueError` for invalid ``base`` values in their
