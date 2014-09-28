@@ -86,7 +86,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
             return ''
         parts = ['--no-index']
         for source in self._sources:
-            parts.append("--find-links '{}'".format(source))
+            parts.append("--find-links '{0}'".format(source))
         return ' '.join(parts)
 
     def install(self, release_id, upgrade=False):
@@ -125,5 +125,5 @@ class VirtualEnvInstallation(ProjectBaseMixin):
         if sources:
             cmd.append(sources)
 
-        cmd.extend("'{}'".format(package) for package in self._packages)
+        cmd.extend("'{0}'".format(package) for package in self._packages)
         return self._runner.run(' '.join(cmd))
