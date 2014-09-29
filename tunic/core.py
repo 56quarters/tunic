@@ -113,7 +113,7 @@ def get_release_id(version=None):
     If a version is supplied, the release ID will be of the form
     '$timestamp-$version'. For example,  ``20140214231159-1.4.1``.
 
-    If the version is not supplied the release D will be of the
+    If the version is not supplied the release ID will be of the
     form '$timestamp'. For example, ``20140214231159``.
 
     :param str version: Version to include in the release ID
