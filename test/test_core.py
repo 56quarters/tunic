@@ -201,9 +201,9 @@ def test_split_by_line_no_newline():
 
 
 def test_split_by_line_windows():
-    assert ['foo', 'bar'] == tunic.core.split_by_line('foo\n\rbar')
-    assert ['foo', 'bar'] == tunic.core.split_by_line(' foo\n\rbar ')
-    assert ['foo', 'bar'] == tunic.core.split_by_line(' foo \n\r bar ')
+    assert ['foo', 'bar'] == tunic.core.split_by_line('foo\r\nbar')
+    assert ['foo', 'bar'] == tunic.core.split_by_line(' foo\r\nbar ')
+    assert ['foo', 'bar'] == tunic.core.split_by_line(' foo \r\n bar ')
 
 
 def test_split_by_line_unix():
