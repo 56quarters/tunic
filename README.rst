@@ -29,7 +29,7 @@ You could then make use of it in your deploy process like so. ::
         installer = VirtualEnvInstaller(APP_BASE, ['myapp'])
         release_manager = ReleaseManager(APP_BASE)
 
-        installer.installer(release)
+        installer.install(release)
         release_manager.set_current_release(release)
 
         start_my_app()
