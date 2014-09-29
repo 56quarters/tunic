@@ -25,15 +25,21 @@ from the Python Package Index (PyPI) using the pip tool like so. ::
 You could then make use of it in your deploy process like so. ::
 
     from fabric.api import task
-    from tunic.api import get_release_id, ReleaseManager
+    from tunic.api import get_release_id, ReleaseManager, VirtualEnvInstallation
+
+    APP_BASE = '/srv/www/myapp'
 
     @task
     def deploy():
         stop_my_app()
         release = get_release_id()
-        install_my_app(release)
-        rm = ReleaseManager('/srv/www/mysite')
-        rm.set_current_release(release)
+
+        installer = VirtualEnvInstaller(APP_BASE, ['myapp'])
+        release_manager = ReleaseManager(APP_BASE)
+
+        installer.installer(release)
+        release_manager.set_current_release(release)
+
         start_my_app()
 
 The above snippet is just the start, take a look around the code base
@@ -47,7 +53,6 @@ Contents
 
     design
     usage
-    examples
     api
     contributing
     changes
