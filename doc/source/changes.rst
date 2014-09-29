@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+0.4.0 - Future release
+----------------------
+
+
 0.3.0 - 2014-09-28
 ------------------
 * Test coverage improvements
