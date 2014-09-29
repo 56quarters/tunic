@@ -83,6 +83,9 @@ def get_current_path(base):
     exists or points to a valid release, it only returns the full path
     that it should be at based on the given project base directory.
 
+    See :doc:`design` for more information about the expected directory
+    structure for deployments.
+
     :param str base: Project base directory (absolute path)
     :return: Path to the 'current' symlink
     :rtype: str
@@ -97,6 +100,9 @@ def get_releases_path(base):
     Note that this function does not ensure that the releases directory
     exists, it only returns the full path that it should be at based on
     the given project base directory.
+
+    See :doc:`design` for more information about the expected directory
+    structure for deployments.
 
     :param str base: Project base directory (absolute path)
     :return: Path to the releases directory
