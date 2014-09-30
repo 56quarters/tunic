@@ -59,7 +59,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
         :param FabRunner runner: Optional runner to use for executing
             remote commands to manage releases.
         :raises ValueError: If no packages are given, packages is not an iterable
-            collection or some kind, or if sources is specified by not an iterable
+            collection or some kind, or if sources is specified but not an iterable
             collection of some kind.
         """
         super(VirtualEnvInstallation, self).__init__(base)
