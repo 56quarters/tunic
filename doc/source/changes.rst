@@ -3,7 +3,8 @@ Change Log
 
 0.4.0 - Future release
 ----------------------
-
+* Allow override of the ``virtualenv`` script location on the remote
+  server when using the :class:`tunic.api.VirtualEnvInstallation` class.
 
 0.3.0 - 2014-09-28
 ------------------

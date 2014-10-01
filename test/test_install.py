@@ -64,6 +64,18 @@ class TestVirtualEnvInstallation(object):
         self.runner.run.assert_any_call(
             "virtualenv '/tmp/test/releases/19970829021442'")
 
+    def test_install_no_existing_virtual_env_custom_location(self):
+        installer = tunic.install.VirtualEnvInstallation(
+            '/tmp/test', ['foo'], venv_path='/opt/python/bin/virtualenv',
+            runner=self.runner)
+
+        self.runner.exists.return_value = False
+
+        installer.install('19970829021442')
+
+        self.runner.run.assert_any_call(
+            "/opt/python/bin/virtualenv '/tmp/test/releases/19970829021442'")
+
     def test_install_with_upgrade(self):
         installer = tunic.install.VirtualEnvInstallation(
             '/tmp/test', ['foo', 'bar'], runner=self.runner)

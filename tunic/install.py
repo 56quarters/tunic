@@ -44,7 +44,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
     structure for deployments.
     """
 
-    def __init__(self, base, packages, sources=None, runner=None):
+    def __init__(self, base, packages, sources=None, venv_path=None, runner=None):
         """Set the project base directory, packages to install, and optionally
         alternative sources from which to download dependencies.
 
@@ -56,6 +56,9 @@ class VirtualEnvInstallation(ProjectBaseMixin):
             either URLs or file paths. E.g. 'http://pypi.example.com/simple/'
             or '/tmp/build/mypackages'. Paths and URLs may be mixed in the same
             list of sources.
+        :param str venv_path: Optional absolute path to the virtualenv tool on
+            the remote server. Required if the virtualenv tool is not in the
+            PATH on the remote server.
         :param FabRunner runner: Optional runner to use for executing
             remote commands to manage releases.
         :raises ValueError: If no packages are given, packages is not an iterable
@@ -76,6 +79,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
 
         self._packages = list(packages)
         self._sources = list(sources) if sources is not None else []
+        self._venv_path = venv_path if venv_path is not None else 'virtualenv'
         self._runner = runner if runner is not None else FabRunner()
 
     def _get_install_sources(self):
@@ -115,7 +119,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
         """
         release_path = os.path.join(self._releases, release_id)
         if not self._runner.exists(release_path):
-            self._runner.run("virtualenv '%s'" % release_path)
+            self._runner.run("{0} '{1}'".format(self._venv_path, release_path))
 
         cmd = [os.path.join(release_path, 'bin', 'pip'), 'install']
         if upgrade:
