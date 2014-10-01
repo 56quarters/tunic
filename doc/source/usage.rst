@@ -279,7 +279,7 @@ example below!
 
 .. code-block:: python
 
-    from fabic.api import task, warn
+    from fabic.api import hide, task, warn
     from tunic.api import (
         get_current_path,
         get_releases_path,
@@ -292,31 +292,50 @@ example below!
 
     DEPLOY_OWNER = 'root:www'
 
-    MY_PACKAGES = 'https://pypi.example.com/myapp/'
-
-    THIRD_PARTY = 'https://pypi.example.com/3rd-party/'
+    # URLs do download artifacts from. Notice that we don't
+    # include version numbers in these URls. We'll use the
+    # version specified as part of the deploy to build source
+    # URLs below specific to our version.
+    MY_PACKAGES = 'https://artifacts.example.com/myapp/'
+    THIRD_PARTY = 'https://artifacts.example.com/3rd-party/'
 
     @task
     def deploy(version):
+        # Ensure that the correct directory structure exists on
+        # the remote server and attempt to set the permissions of
+        # it do something reasonable.
         setup = ProjectSetup(APP_BASE)
         setup.setup_directories()
         setup.set_permissions(DEPLOY_OWNER)
 
+        # Come up with a new release ID and build source URLs that
+        # include the particular version of our project that we want
+        # to deploy.
         release_id = get_release_id(version)
         versioned_package_sources = MY_PACKAGES + version
         versioned_third_party_sources = THIRD_PARTY + version
 
+        # Install the 'myapp' and 'gunicorn' packages into a new
+        # virtualenv on a remote server using our own custom internal
+        # artifact sources, ignoring the default Python Package Index.
         installation = VirtualEnvInstallation(
             APP_BASE, ['myapp', 'gunicorn'],
             sources=[versioned_package_sources,
                 versioned_third_party_sources])
 
-        installation.install(release_id)
+        with hide('stdout'):
+            # Installation output can be quite verbose, so we suppress
+            # it here.
+            installation.install(release_id)
 
+        # Use the release manager to mark the just installed release as
+        # the 'current' release and remove all but the N newest releases.
         release_manager = ReleaseManager(APP_BASE)
         release_manager.set_current_release(release_id)
         release_manager.cleanup()
 
+        # Ensure that permissions and ownership of the deploys are
+        # correct after the new deploy before exiting.
         setup.set_permissions(DEPLOY_OWNER)
 
     @task
@@ -324,8 +343,13 @@ example below!
         release_manager = ReleaseManager(APP_BASE)
         previous = release_manager.get_previous_release()
 
+        # If the previous version couldn't be determined for some reason,
+        # we can rollback so we just given up now. This can happen when
+        # there's only a single deployment, when the 'current' symlink
+        # doesn't exist, when deploys aren't named correct, etc.
         if previous is None:
             warn("No previous release, can't rollback!")
             return
 
+        # Atomically swap the 'current' symlink to another release.
         release_manager.set_current_release(previous)
