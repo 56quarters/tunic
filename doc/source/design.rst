@@ -63,7 +63,7 @@ Since Tunic is built on Fabric, it inherits the following behavior.
   use of Fabric `context managers`_.
 
 * Since Tunic requires Fabric and Fabric doesn't support Python 3 (yet), Tunic
-  cannot be used under Python 3.
+  won't work with Python 3 at this time.
 
 .. _context managers: http://docs.fabfile.org/en/latest/api/core/context_managers.html
 
