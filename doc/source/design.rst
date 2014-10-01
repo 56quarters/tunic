@@ -41,10 +41,12 @@ For this example, let's assume you're deploying your project to ``/srv/www/myapp
   writeable by the user or group that deploys are being performed by.
 
 * Each deploy under the ``releases`` directory must be named starting with a
-  timestamp corresponding to when the deploy was done. The name for each deploy
-  will be generated for you if you use the :func:`tunic.api.get_release_id`
-  function. This is required to ensure that we can determine the time deploys
-  were done relative to each other.
+  timestamp corresponding to when the deploy was done. The timestamp component
+  should built with the largest period of time first (the current year), followed
+  by each smaller component down to the second. The name for each deploy will be
+  generated for you if you use the :func:`tunic.api.get_release_id` function.
+  This is required to ensure that we can determine the time deploys were done
+  relative to each other.
 
 * ``current`` must be a symlink to the active deployment in the ``releases``
   directory. This symlink will be created for you automatically if you use the
