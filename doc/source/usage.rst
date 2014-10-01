@@ -67,6 +67,8 @@ out which deployments are the oldest, which particular deployment came before th
 An example of using the :func:`tunic.api.get_release_id` method to set up a new
 deployment.
 
+.. _`ISO 8601`: http://en.wikipedia.org/wiki/ISO_8601
+
 .. code-block:: python
 
     import os.path
@@ -84,11 +86,65 @@ deployment.
         return new_release
 
 
-.. _`ISO 8601`: http://en.wikipedia.org/wiki/ISO_8601
-
 ReleaseManager
 --------------
 
+The :class:`tunic.api.ReleaseManager` class is responsible for inspecting and
+manipulating previous deployments and the current deployment on a remote server.
+
+In order manipulate deployments like this, the ReleaseManager requires that they
+are organized as described in :doc:`design`.
+
+An example of getting all available deployments (current and past) from a server.
+
+.. code-block:: python
+
+    from tunic.api import ReleaseManager
+
+    APP_BASE = '/srv/www/myapp'
+
+    def get_all_releases():
+        release_manager = ReleaseManager(APP_BASE)
+        return release_manager.get_releases()
+
+
+An example of creating a "rollback" task in Fabric for switching to the previous
+deployment of your project that uses the :meth:`tunic.api.ReleaseManager.get_previous_release`
+and :meth:`tunic.api.ReleaseManager.set_current_release` methods.
+
+.. code-block:: python
+
+    from fabric.api import task, warn
+    from tunic.api import ReleaseManager
+
+    APP_BASE = '/srv/www/myapp'
+
+    @task
+    def rollback():
+        release_manager = ReleaseManager(APP_BASE)
+        previous = release_manager.get_previous_release()
+
+        if previous is None:
+            warn("No previous release, can't rollback!")
+            return
+
+        release_manager.set_current_release(previous)
+
+The ReleaseManager can also remove old deployments. To do this, you must have named
+the deployments with a timestamp based prefix. If you've used :func:`tunic.api.get_release_id`
+to name your deployments, this is handled for you.
+
+.. code-block:: python
+
+    from fabric.api import task
+    from tunic.api import ReleaseManager
+
+    APP_BASE = '/srv/www/myapp'
+
+    @task
+    def cleanup(deployments_to_keep=5):
+        release_manager = ReleaseManager(APP_BASE)
+        release_manager.cleanup(keep=deployments_to_keep)
 
 ProjectSetup
 ------------
