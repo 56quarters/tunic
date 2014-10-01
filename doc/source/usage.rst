@@ -247,9 +247,9 @@ copied there by a different step in your deploy process.
             APP_BASE, ['myapp', 'gunicorn'], sources=[LOCAL_PACKAGES])
         installation.install('20141002111442-1.4.1')
 
-Better still, you may want to run your own local PyPI instance. In this
-case you'd simply include a URLs to index pages on the instance as sources.
-An example is below.
+Better still, you may want to run your own local build artifact repository.
+In this case you'd simply include a URLs to index pages on the repository as
+sources. An example is below.
 
 .. code-block:: python
 
@@ -258,9 +258,9 @@ An example is below.
 
     APP_BASE = '/srv/www/myapp'
 
-    MY_PACKAGES = 'https://pypi.example.com/myapp/1.4.1/'
+    MY_PACKAGES = 'https://artifacts.example.com/myapp/1.4.1/'
 
-    THIRD_PARTY = 'https://pypi.example.com/3rd-party/1.4.1/'
+    THIRD_PARTY = 'https://artifacts.example.com/3rd-party/1.4.1/'
 
     @task
     def install():
