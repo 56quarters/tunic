@@ -21,12 +21,13 @@ from .core import (
     ReleaseManager,
     ProjectSetup)
 
-from .install import VirtualEnvInstallation
+from .install import LocalArtifactTransfer, VirtualEnvInstallation
 
 __all__ = [
     'get_current_path',
     'get_releases_path',
     'get_release_id',
+    'LocalArtifactTransfer',
     'ReleaseManager',
     'ProjectSetup',
     'VirtualEnvInstallation'

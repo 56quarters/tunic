@@ -131,3 +131,55 @@ class VirtualEnvInstallation(ProjectBaseMixin):
 
         cmd.extend("'{0}'".format(package) for package in self._packages)
         return self._runner.run(' '.join(cmd))
+
+
+class LocalArtifactTransfer(object):
+    """Transfer local artifacts to a remote server when entering a
+    context manager and clean them up on the remote server after
+    leaving the block.
+
+    The destination of the artifacts must should be a directory
+    that is writable by the user running the deploy or that the
+    user has permission to create.
+
+    When used as a context manager, the value yielded when entering
+    the block will be the path that the artifacts were transferred
+    to on the remote machine.
+
+    The local artifacts are not modified or removed on exit.
+    """
+
+    def __init__(self, local_path, remote_path, runner=None):
+        """Set the local directory that contains the artifacts and
+        the remote directory that they should be transferred to.
+
+        :param str local_path: Path on the local machine that contains
+            the build artifacts to be transferred.
+        :param str remote_path: Directory on the remote machine that
+            the build artifacts should be transferred to.
+        :param FabRunner runner: Optional runner to use for executing
+            commands to transfer artifacts.
+        """
+        self._local_path = local_path
+        self._remote_path = remote_path
+        self._runner = runner if runner is not None else FabRunner()
+
+    def __enter__(self):
+        """Transfer the local artifacts to the appropriate place on
+        the remote server (ensuring the path exists first) and return
+        the remote path.
+
+        :return: The path artifacts were transferred to on the remote
+            server
+        :rtype: str
+        """
+        self._runner.run("mkdir -p '{0}'".format(self._remote_path))
+        self._runner.put(self._local_path, self._remote_path)
+        return self._remote_path
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Remove the directory containing the build artifacts on the
+        remote server.
+        """
+        self._runner.run("rm -rf '{0}'".format(self._remote_path))
+        return False

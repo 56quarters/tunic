@@ -194,6 +194,38 @@ before and after a deploy, assuming the user doing the deploy has sudo permissio
         setup.set_permissions('root:www')
 
 
+LocalArtifactTransfer
+---------------------
+
+The :class:`tunic.api.LocalArtifactTransfer` class allows you to transfer
+locally built artifacts to a remote server and clean them up afterwards in
+the scope of a Python `context manager`_. With more advanced deploy setups
+that use a centralized artifact repository, this class isn't usually needed.
+However, if you don't have a centralized repository, it can save you a bit
+of work.
+
+An example of using it to transfer locally built artifacts is below.
+
+.. code-block:: python
+
+    from fabric.api import task
+    from tunic.api import LocalArtifactTransfer
+    from .myapp import install_project_from_artifacts
+
+    LOCAL_BUILD_DIRECTORY = '/tmp/build'
+
+    REMOTE_ARTIFACT_DIRECTORY = '/tmp/artifacts
+
+    @task
+    def deploy():
+        transfer = LocalArtifactTransfer(
+            LOCAL_BUILD_DIRECTORY, REMOTE_ARTIFACT_DIRECTORY)
+
+        with transfer as remote_directory:
+            install_project_from_artifacts(remote_directory)
+
+.. _`context manager`:  http://effbot.org/zone/python-with-statement.htm
+
 VirtualEnvInstallation
 ----------------------
 

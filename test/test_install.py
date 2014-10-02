@@ -106,3 +106,26 @@ class TestVirtualEnvInstallation(object):
         self.runner.run.assert_any_call(
             "/tmp/test/releases/19970829021442/bin/pip install "
             "--no-index --find-links '/tmp/wheelhouse' 'foo'")
+
+
+class TestLocalArtifactTransfer(object):
+    def setup(self):
+        self.runner = mock.Mock(spec=tunic.core.FabRunner)
+
+    def test_as_context_manager(self):
+        local_path = '/tmp/build'
+        remote_path = '/tmp/artifacts'
+
+        transfer = tunic.install.LocalArtifactTransfer(
+            local_path, remote_path, runner=self.runner)
+
+        with transfer as remote:
+            assert remote == remote_path
+
+        self.runner.run.assert_any_call(
+            "mkdir -p '/tmp/artifacts'")
+
+        assert self.runner.put.called
+
+        self.runner.run.assert_any_call(
+            "rm -rf '/tmp/artifacts'")
