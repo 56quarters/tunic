@@ -24,7 +24,7 @@ class TestReleaseManager(object):
         rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
 
         assert '20140921215951' == rm.get_current_release()
-        self.runner.run.assert_called_once_with('readlink /srv/test/current')
+        self.runner.run.assert_called_once_with("readlink '/srv/test/current'")
 
     def test_get_releases(self):
         self.runner.run.return_value = StrDecorator(
@@ -34,7 +34,7 @@ class TestReleaseManager(object):
         rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
         assert ['20140921220657', '20140921220642', '20140921215951'] == \
                rm.get_releases()
-        self.runner.run.assert_called_once_with('ls -1r /srv/test/releases')
+        self.runner.run.assert_called_once_with("ls -1r '/srv/test/releases'")
 
     def test_get_previous_release(self):
         def return_values(*args):
@@ -130,9 +130,9 @@ class TestReleaseManager(object):
         rm._set_current_release('20140921220642', rand='1234')
 
         self.runner.run.assert_any_call(
-            'ln -s /srv/test/releases/20140921220642 /srv/test/1234')
+            "ln -s '/srv/test/releases/20140921220642' '/srv/test/1234'")
         self.runner.run.assert_any_call(
-            'mv -T /srv/test/1234 /srv/test/current')
+            "mv -T '/srv/test/1234' '/srv/test/current'")
 
     def test_cleanup(self):
         def return_values(*args):
@@ -152,8 +152,8 @@ class TestReleaseManager(object):
         rm = tunic.core.ReleaseManager('/srv/test', runner=self.runner)
         rm.cleanup(keep=1)
 
-        self.runner.run.assert_any_call('rm -rf /srv/test/releases/20140921220642')
-        self.runner.run.assert_any_call('rm -rf /srv/test/releases/20140921215951')
+        self.runner.run.assert_any_call("rm -rf '/srv/test/releases/20140921220642'")
+        self.runner.run.assert_any_call("rm -rf '/srv/test/releases/20140921215951'")
 
 
 class TestProjectSetup(object):
@@ -164,30 +164,30 @@ class TestProjectSetup(object):
         setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.setup_directories(use_sudo=True)
 
-        self.runner.sudo.assert_called_once_with('mkdir -p /srv/test/releases')
+        self.runner.sudo.assert_called_once_with("mkdir -p '/srv/test/releases'")
 
     def test_setup_directories_no_sudo(self):
         setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.setup_directories(use_sudo=False)
 
-        self.runner.run.assert_called_once_with('mkdir -p /srv/test/releases')
+        self.runner.run.assert_called_once_with("mkdir -p '/srv/test/releases'")
 
     def test_set_permissions_with_sudo(self):
         setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.set_permissions('user:group', use_sudo=True)
 
-        self.runner.sudo.assert_any_call('chown -R user:group /srv/test')
-        self.runner.sudo.assert_any_call('chmod u+rwx,g+rws,o+rx /srv/test')
-        self.runner.sudo.assert_any_call('chmod u+rwx,g+rws,o+rx /srv/test/releases')
-        self.runner.sudo.assert_any_call('chmod -R u+rw,g+rw,o+r /srv/test')
+        self.runner.sudo.assert_any_call("chown -R 'user:group' '/srv/test'")
+        self.runner.sudo.assert_any_call("chmod 'u+rwx,g+rws,o+rx' '/srv/test'")
+        self.runner.sudo.assert_any_call("chmod 'u+rwx,g+rws,o+rx' '/srv/test/releases'")
+        self.runner.sudo.assert_any_call("chmod -R 'u+rw,g+rw,o+r' '/srv/test'")
 
     def test_set_permissions_no_sudo(self):
         setup = tunic.core.ProjectSetup('/srv/test', runner=self.runner)
         setup.set_permissions('user:group', use_sudo=False)
 
-        self.runner.run.assert_any_call('chmod u+rwx,g+rws,o+rx /srv/test')
-        self.runner.run.assert_any_call('chmod u+rwx,g+rws,o+rx /srv/test/releases')
-        self.runner.run.assert_any_call('chmod -R u+rw,g+rw,o+r /srv/test')
+        self.runner.run.assert_any_call("chmod 'u+rwx,g+rws,o+rx' '/srv/test'")
+        self.runner.run.assert_any_call("chmod 'u+rwx,g+rws,o+rx' '/srv/test/releases'")
+        self.runner.run.assert_any_call("chmod -R 'u+rw,g+rw,o+r' '/srv/test'")
 
 
 def test_split_by_line_empty_string():

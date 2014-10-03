@@ -230,7 +230,7 @@ class ReleaseManager(ProjectBaseMixin):
         :return: Get the current release ID
         :rtype: str
         """
-        current = self._runner.run('readlink {0}'.format(self._current))
+        current = self._runner.run("readlink '{0}'".format(self._current))
         if current.failed:
             return None
         return os.path.basename(current.strip())
@@ -242,7 +242,7 @@ class ReleaseManager(ProjectBaseMixin):
         :rtype: list
         """
         return split_by_line(
-            self._runner.run('ls -1r {0}'.format(self._releases)))
+            self._runner.run("ls -1r '{0}'".format(self._releases)))
 
     def get_previous_release(self):
         """Get the release ID of the deployment immediately
@@ -294,8 +294,8 @@ class ReleaseManager(ProjectBaseMixin):
         # newly created release, then rename it to 'current' such
         # that the symlink is updated atomically [1].
         # [1] - http://rcrowley.org/2010/01/06/things-unix-can-do-atomically
-        self._runner.run("ln -s {0} {1}".format(target, tmp_path))
-        self._runner.run("mv -T {0} {1}".format(tmp_path, self._current))
+        self._runner.run("ln -s '{0}' '{1}'".format(target, tmp_path))
+        self._runner.run("mv -T '{0}' '{1}'".format(tmp_path, self._current))
 
     def cleanup(self, keep=5):
         """Remove all but the ``keep`` most recent releases.
@@ -310,7 +310,7 @@ class ReleaseManager(ProjectBaseMixin):
         to_delete = [version for version in releases[keep:] if version != current_version]
 
         for release in to_delete:
-            self._runner.run("rm -rf {0}".format(os.path.join(self._releases, release)))
+            self._runner.run("rm -rf '{0}'".format(os.path.join(self._releases, release)))
 
 
 class ProjectSetup(ProjectBaseMixin):
@@ -352,7 +352,7 @@ class ProjectSetup(ProjectBaseMixin):
             ``run()`` command.
         """
         runner = self._runner.sudo if use_sudo else self._runner.run
-        runner('mkdir -p {0}'.format(self._releases))
+        runner("mkdir -p '{0}'".format(self._releases))
 
     def set_permissions(
             self, owner, file_perms=PERMS_FILE_DEFAULT,
@@ -394,9 +394,9 @@ class ProjectSetup(ProjectBaseMixin):
         runner = self._runner.sudo if use_sudo else self._runner.run
 
         if use_sudo:
-            runner('chown -R {0} {1}'.format(owner, self._base))
+            runner("chown -R '{0}' '{1}'".format(owner, self._base))
 
         for path in (self._base, self._releases):
-            runner('chmod {0} {1}'.format(dir_perms, path))
+            runner("chmod '{0}' '{1}'".format(dir_perms, path))
 
-        runner('chmod -R {0} {1}'.format(file_perms, self._base))
+        runner("chmod -R '{0}' '{1}'".format(file_perms, self._base))
