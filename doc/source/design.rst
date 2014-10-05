@@ -65,5 +65,10 @@ Since Tunic is built on Fabric, it inherits the following behavior.
 * Since Tunic requires Fabric and Fabric doesn't support Python 3 (yet), Tunic
   won't work with Python 3 at this time.
 
+* Since Tunic makes heavy use of Fabric and Fabric is not `thread safe`_, Tunic
+  is also not thread safe.
+
 .. _context managers: http://docs.fabfile.org/en/latest/api/core/context_managers.html
+
+.. _thread safe: http://www.fabfile.org/faq.html#is-fabric-thread-safe
 
