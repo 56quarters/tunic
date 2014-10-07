@@ -138,13 +138,36 @@ class LocalArtifactTransfer(object):
     context manager and clean them up on the remote server after
     leaving the block.
 
+    For both files and directories, ``local_path`` will end up as a
+    child of ``remote_path``. If ``local_path`` is a directory its
+    contents will be transferred as well.
+
+    For example, if ``/tmp/myapp`` is a directory that contains several
+    files, the example below will have the following effect.
+
+    >>> transfer = LocalArtifactTransfer('/tmp/myapp', '/tmp/build')
+    >>> with transfer:
+    ...     pass
+
+    The directory ``myapp`` and its contents would be at ``/tmp/build/myapp``
+    on the remote machine within the scope of the context manager.
+
+    If ``/tmp/myartifact.zip`` is a single file, the example below will
+    have the following effect.
+
+    >>> transfer = LocalArtifactTransfer('/tmp/myartifact.zip', '/tmp/build')
+    >>> with transfer:
+    ...     pass
+
+    The file ``myartifact.zip`` would be at ``/tmp/build/myartifact.zip``
+    on the remote machine within the scope of the context manager.
+
     The destination of the artifacts must should be a directory
     that is writable by the user running the deploy or that the
     user has permission to create.
 
     When used as a context manager, the value yielded when entering
-    the block will be the path that the artifacts were transferred
-    to on the remote machine.
+    the block will be the value of ``remote_path``.
 
     The local artifacts are not modified or removed on exit.
     """
@@ -183,3 +206,4 @@ class LocalArtifactTransfer(object):
         """
         self._runner.run("rm -rf '{0}'".format(self._remote_path))
         return False
+
