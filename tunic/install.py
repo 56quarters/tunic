@@ -216,3 +216,21 @@ class LocalArtifactTransfer(object):
         return False
 
 
+class StaticFileInstallation(ProjectBaseMixin):
+    def __init__(self, base, local_path, runner=None):
+        super(StaticFileInstallation, self).__init__(base)
+        self._local_path = local_path
+        self._runner = runner if runner is not None else FabRunner()
+
+    def install(self, release_id):
+        pass
+
+
+class GitRepoInstallation(ProjectBaseMixin):
+    def __init__(self, base, repo_url, runner=None):
+        super(GitRepoInstallation, self).__init__(base)
+        self._repo_url = repo_url
+        self._runner = runner if runner is not None else FabRunner()
+
+    def install(self, release_id):
+        pass
