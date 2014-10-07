@@ -150,7 +150,8 @@ class LocalArtifactTransfer(object):
     ...     pass
 
     The directory ``myapp`` and its contents would be at ``/tmp/build/myapp``
-    on the remote machine within the scope of the context manager.
+    on the remote machine within the scope of the context manager. After the
+    context manager exits ``/tmp/build`` on the remote machine will be removed.
 
     If ``/tmp/myartifact.zip`` is a single file, the example below will
     have the following effect.
@@ -160,7 +161,9 @@ class LocalArtifactTransfer(object):
     ...     pass
 
     The file ``myartifact.zip`` would be at ``/tmp/build/myartifact.zip``
-    on the remote machine within the scope of the context manager.
+    on the remote machine within the scope of the context manager. After
+    the context manager exits ``/tmp/build`` on the remote machine will be
+    removed.
 
     The destination of the artifacts must should be a directory
     that is writable by the user running the deploy or that the
@@ -169,6 +172,7 @@ class LocalArtifactTransfer(object):
     When used as a context manager, the value yielded when entering
     the block will be the value of ``remote_path``.
 
+    The ``remote_path`` will be removed when the context manager exits.
     The local artifacts are not modified or removed on exit.
     """
 
@@ -198,6 +202,10 @@ class LocalArtifactTransfer(object):
         """
         self._runner.run("mkdir -p '{0}'".format(self._remote_path))
         self._runner.put(self._local_path, self._remote_path)
+        # TODO: Would this value be more useful as something like
+        # os.path.join(remote_path, os.path.basename(local_path)) ?
+        # That would eliminate the need for weird joins when constructing
+        # the VirtualEnvInstallation instances.
         return self._remote_path
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -206,4 +214,5 @@ class LocalArtifactTransfer(object):
         """
         self._runner.run("rm -rf '{0}'".format(self._remote_path))
         return False
+
 
