@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+0.5.0 - Future release
+----------------------
+* **Breaking change**: Change behavior of :class:`tunic.api.LocalArtifactTransfer`
+  to yield the final destination path on the remote server (a combination of the
+  remote path and right-most component of the local path). This new value will
+  be the only path removed on the remote server when the context manager exits.
+* **Breaking change**: Trailing slashes on ``local_path`` and ``remote_path``
+  constructor arguments to :class:`tunic.api.LocalArtifactTransfer` are now removed
+  before being used.
+
 0.4.0 - 2014-10-02
 ------------------
 * Allow override of the ``virtualenv`` script location on the remote

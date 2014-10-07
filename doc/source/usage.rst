@@ -212,7 +212,7 @@ An example of using it to transfer locally built artifacts is below.
     from tunic.api import LocalArtifactTransfer
     from .myapp import install_project_from_artifacts
 
-    LOCAL_BUILD_DIRECTORY = '/tmp/build'
+    LOCAL_BUILD_DIRECTORY = '/tmp/myapp'
 
     REMOTE_ARTIFACT_DIRECTORY = '/tmp/artifacts
 
@@ -221,11 +221,14 @@ An example of using it to transfer locally built artifacts is below.
         transfer = LocalArtifactTransfer(
             LOCAL_BUILD_DIRECTORY, REMOTE_ARTIFACT_DIRECTORY)
 
-        with transfer as remote_directory:
-            install_project_from_artifacts(remote_directory)
+        with transfer as remote_destination:
+            install_project_from_artifacts(remote_destination)
 
-After the scope of the ``transfer`` context manager is exited, the directory
-``/tmp/artifacts`` on the remote machine is removed.
+In this example, the contents of the local directory ``/tmp/myapp`` are
+copied to the remote directory ``/tmp/artifacts/myapp``. The value of ``remote_destination``
+within the context manager is ``/tmp/artifacts/myapp``. After the scope of
+the ``transfer`` context manager is exited, the directory ``/tmp/artifacts/myapp``
+on the remote machine is removed.
 
 .. _`context manager`:  http://effbot.org/zone/python-with-statement.htm
 

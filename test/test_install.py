@@ -112,20 +112,56 @@ class TestLocalArtifactTransfer(object):
     def setup(self):
         self.runner = mock.Mock(spec=tunic.core.FabRunner)
 
-    def test_as_context_manager(self):
-        local_path = '/tmp/build'
-        remote_path = '/tmp/artifacts'
+    def test_as_context_manager_with_local_directory(self):
+        local_path = '/tmp/myapp'
+        remote_path = '/tmp/build'
 
         transfer = tunic.install.LocalArtifactTransfer(
             local_path, remote_path, runner=self.runner)
 
         with transfer as remote:
-            assert remote == remote_path
+            assert remote == '/tmp/build/myapp'
 
         self.runner.run.assert_any_call(
-            "mkdir -p '/tmp/artifacts'")
+            "mkdir -p '/tmp/build'")
 
         assert self.runner.put.called
 
         self.runner.run.assert_any_call(
-            "rm -rf '/tmp/artifacts'")
+            "rm -rf '/tmp/build/myapp'")
+
+    def test_as_context_manager_with_local_file(self):
+        local_path = '/tmp/myapp.zip'
+        remote_path = '/tmp/build'
+
+        transfer = tunic.install.LocalArtifactTransfer(
+            local_path, remote_path, runner=self.runner)
+
+        with transfer as remote:
+            assert remote == '/tmp/build/myapp.zip'
+
+        self.runner.run.assert_any_call(
+            "mkdir -p '/tmp/build'")
+
+        assert self.runner.put.called
+
+        self.runner.run.assert_any_call(
+            "rm -rf '/tmp/build/myapp.zip'")
+
+    def test_as_context_manager_with_trailing_slashes(self):
+        local_path = '/tmp/myapp/'
+        remote_path = '/tmp/build/'
+
+        transfer = tunic.install.LocalArtifactTransfer(
+            local_path, remote_path, runner=self.runner)
+
+        with transfer as remote:
+            assert remote == '/tmp/build/myapp'
+
+        self.runner.run.assert_any_call(
+            "mkdir -p '/tmp/build'")
+
+        assert self.runner.put.called
+
+        self.runner.run.assert_any_call(
+            "rm -rf '/tmp/build/myapp'")

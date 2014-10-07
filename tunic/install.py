@@ -134,67 +134,79 @@ class VirtualEnvInstallation(ProjectBaseMixin):
 
 
 class LocalArtifactTransfer(object):
-    """Transfer local artifacts to a remote server when entering a
-    context manager and clean them up on the remote server after
-    leaving the block.
+    """Transfer a local artifact or directory of artifacts to a remote
+    server when entering a context manager and clean the transferred files
+    up on the remote server after leaving the block.
 
-    For both files and directories, ``local_path`` will end up as a
-    child of ``remote_path``. If ``local_path`` is a directory its
-    contents will be transferred as well.
+    The value yielded when entering the context manager will be the
+    full path to the transferred file or directory on the remote
+    server. The value yielded will be made up of ``remote_path``
+    combined with the right most component of ``local_path``.
 
-    For example, if ``/tmp/myapp`` is a directory that contains several
-    files, the example below will have the following effect.
+    For example, if ``/tmp/myapp`` is a local directory that contains
+    several files, the example below will have the following effect.
 
-    >>> transfer = LocalArtifactTransfer('/tmp/myapp', '/tmp/build')
-    >>> with transfer:
+    >>> transfer = LocalArtifactTransfer('/tmp/myapp', '/tmp/artifacts')
+    >>> with transfer as remote_dest:
     ...     pass
 
-    The directory ``myapp`` and its contents would be at ``/tmp/build/myapp``
-    on the remote machine within the scope of the context manager. After the
-    context manager exits ``/tmp/build`` on the remote machine will be removed.
+    The directory ``myapp`` and its contents would be copied to ``/tmp/artifacts/myapp``
+    on the remote machine within the scope of the context manager and
+    the value of ``remote_dest`` would be ``/tmp/artifacts/myapp``. After
+    the context manager exits ``/tmp/artifacts/myapp`` on the remote machine
+    will be removed.
 
-    If ``/tmp/myartifact.zip`` is a single file, the example below will
-    have the following effect.
+    If ``/tmp/myartifact.zip`` is a single local file, the example below
+    will have the following effect.
 
-    >>> transfer = LocalArtifactTransfer('/tmp/myartifact.zip', '/tmp/build')
-    >>> with transfer:
+    >>> transfer = LocalArtifactTransfer('/tmp/myartifact.zip', '/tmp/artifacts')
+    >>> with transfer as remote_dest:
     ...     pass
 
-    The file ``myartifact.zip`` would be at ``/tmp/build/myartifact.zip``
-    on the remote machine within the scope of the context manager. After
-    the context manager exits ``/tmp/build`` on the remote machine will be
-    removed.
+    The file ``myartifact.zip`` would be copied to ``/tmp/artifacts/myartifact.zip``
+    on the remote machine within the scope of the context manager and the
+    value of ``remote_dest`` would be ``/tmp/artifacts/myartifact.zip``. After
+    the context manager exits ``/tmp/artifacts/myartifact.zip`` on the remote
+    machine will be removed.
 
-    The destination of the artifacts must should be a directory
-    that is writable by the user running the deploy or that the
-    user has permission to create.
+    The destination of the artifacts must be a directory that is writable
+    by the user running the deploy or that the user has permission to create.
 
-    When used as a context manager, the value yielded when entering
-    the block will be the value of ``remote_path``.
-
-    The ``remote_path`` will be removed when the context manager exits.
-    The local artifacts are not modified or removed on exit.
+    The path yielded by the context  will be removed when the context
+    manager exits. The local artifacts are not modified or removed on
+    exit.
     """
 
     def __init__(self, local_path, remote_path, runner=None):
         """Set the local directory that contains the artifacts and
         the remote directory that they should be transferred to.
 
-        :param str local_path: Path on the local machine that contains
-            the build artifacts to be transferred.
+        Both the local and remote paths should not contain trailing
+        slashes. Any trailing slashes will be removed.
+
+        :param str local_path: Directory path on the local machine that
+            contains the build artifacts to be transferred (without a
+            trailing slash) or the path on the local machine of a single
+            file.
         :param str remote_path: Directory on the remote machine that
-            the build artifacts should be transferred to.
+            the build artifacts should be transferred to (without a
+            tailing slash).
         :param FabRunner runner: Optional runner to use for executing
             commands to transfer artifacts.
         """
-        self._local_path = local_path
-        self._remote_path = remote_path
+        self._local_path = local_path.rstrip(os.path.sep)
+        self._remote_path = remote_path.rstrip(os.path.sep)
+        self._remote_dest = os.path.join(
+            self._remote_path, os.path.basename(self._local_path))
         self._runner = runner if runner is not None else FabRunner()
 
     def __enter__(self):
         """Transfer the local artifacts to the appropriate place on
         the remote server (ensuring the path exists first) and return
-        the remote path.
+        the remote destination path.
+
+        The remote destination path is the remote path joined with the
+        right-most component of the local path.
 
         :return: The path artifacts were transferred to on the remote
             server
@@ -202,17 +214,13 @@ class LocalArtifactTransfer(object):
         """
         self._runner.run("mkdir -p '{0}'".format(self._remote_path))
         self._runner.put(self._local_path, self._remote_path)
-        # TODO: Would this value be more useful as something like
-        # os.path.join(remote_path, os.path.basename(local_path)) ?
-        # That would eliminate the need for weird joins when constructing
-        # the VirtualEnvInstallation instances.
-        return self._remote_path
+        return self._remote_dest
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Remove the directory containing the build artifacts on the
         remote server.
         """
-        self._runner.run("rm -rf '{0}'".format(self._remote_path))
+        self._runner.run("rm -rf '{0}'".format(self._remote_dest))
         return False
 
 
