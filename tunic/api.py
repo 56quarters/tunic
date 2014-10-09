@@ -21,7 +21,7 @@ from .core import (
     ReleaseManager,
     ProjectSetup)
 
-from .install import LocalArtifactTransfer, VirtualEnvInstallation
+from .install import LocalArtifactTransfer, StaticFileInstallation, VirtualEnvInstallation
 
 __all__ = [
     'get_current_path',
@@ -30,5 +30,6 @@ __all__ = [
     'LocalArtifactTransfer',
     'ReleaseManager',
     'ProjectSetup',
+    'StaticFileInstallation',
     'VirtualEnvInstallation'
 ]

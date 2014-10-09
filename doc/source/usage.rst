@@ -232,6 +232,36 @@ on the remote machine is removed.
 
 .. _`context manager`:  http://effbot.org/zone/python-with-statement.htm
 
+
+StaticFileInstallation
+----------------------
+
+The :class:`tunic.api.StaticFileInstallation` class is used to install
+static files (maybe HTML and CSS files created by a static site generator,
+like Nikola_).
+
+The ``StaticFileInstallation`` class assumes that directories for a project
+are setup as described in :doc:`design`.
+
+Below is an example of using the ``StaticFileInstallation`` class to install
+a directory of static files to a release directory on a remote server.
+
+.. code-block:: python
+
+    from fabric.api import task
+    from tunic.api import StaticFileInstallation
+
+    APP_BASE = '/srv/www/blog.example.com'
+
+    LOCAL_FILES = '/home/user/myblog/output'
+
+    @task
+    def install():
+        installation = StaticFileInstallation(APP_BASE, LOCAL_FILES)
+        installation.install('20141002111442')
+
+.. _Nikola: http://getnikola.com/
+
 VirtualEnvInstallation
 ----------------------
 
@@ -239,16 +269,16 @@ The :class:`tunic.api.VirtualEnvInstallation` class is used to install one
 or multiple packages into a Python `virtual environment`_. The virtual
 environment is typically a particular deployment of your project.
 
-The ``VirtualEnvInstallation`` assumes that directories for a project are
-setup as described in :doc:`design`.
+The ``VirtualEnvInstallation`` class assumes that directories for a project
+are setup as described in :doc:`design`.
 
 Usage of this installer requires that the ``virtualenv`` tool is installed
 on the remote server and is on the ``PATH`` of the user performing the deploy
 or the location of the ``virtualenv`` tool is provided to the ``VirtualEnvInstallation``
 class when instantiated.
 
-Below is an example of using the ``VirtualEnvInstallation`` to install a
-project and WSGI server from the default Python Package Index (PyPI).
+Below is an example of using the ``VirtualEnvInstallation`` class to install
+a project and WSGI server from the default Python Package Index (PyPI).
 
 .. code-block:: python
 

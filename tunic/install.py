@@ -46,7 +46,8 @@ class VirtualEnvInstallation(ProjectBaseMixin):
 
     def __init__(self, base, packages, sources=None, venv_path=None, runner=None):
         """Set the project base directory, packages to install, and optionally
-        alternative sources from which to download dependencies.
+        alternative sources from which to download dependencies and path to the
+        virtualenv tool.
 
         :param str base: Absolute path to the root of the code deploy
         :param list packages: A collection of package names to install into
@@ -60,7 +61,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
             the remote server. Required if the virtualenv tool is not in the
             PATH on the remote server.
         :param FabRunner runner: Optional runner to use for executing
-            remote commands to manage releases.
+            remote and local commands to perform the installation.
         :raises ValueError: If no packages are given, packages is not an iterable
             collection or some kind, or if sources is specified but not an iterable
             collection of some kind.
@@ -131,6 +132,68 @@ class VirtualEnvInstallation(ProjectBaseMixin):
 
         cmd.extend("'{0}'".format(package) for package in self._packages)
         return self._runner.run(' '.join(cmd))
+
+
+class StaticFileInstallation(ProjectBaseMixin):
+    """Install the contents of a local directory into a remote release
+    directory.
+
+    If the remote release directory does not already exist, it will be
+    created during the install process.
+
+    See :doc:`design` for more information about the expected directory
+    structure for deployments.
+    """
+
+    def __init__(self, base, local_path, runner=None):
+        """Set the project base directory and path to a directory of static
+        content to be installed into a remote release directory.
+
+        :param str base: Absolute path to the root of the code deploy
+        :param str local_path: Absolute or relative path to a local directory
+            whose contents will be copied to a remote release directory.
+        :param FabRunner runner: Optional runner to use for executing
+            remote and local commands to perform the installation.
+        :raises ValueError: If the base directory or local path isn't
+            specified.
+        """
+        super(StaticFileInstallation, self).__init__(base)
+
+        if not local_path:
+            raise ValueError("You must specify a local path")
+
+        self._local_path = local_path
+        self._runner = runner if runner is not None else FabRunner()
+
+    def install(self, release_id):
+        """Install the contents of the local directory into a release directory.
+
+        If the directory for the given release ID does not exist on the remote
+        system, it will be created. The directory will be created according to
+        the standard Tunic directory structure (see :doc:`design`).
+
+        Note that the name and path of the local directory is irrelevant, only
+        the contents of the specified directory will be transferred to the remote
+        server. The contents will end up as children of the release directory on
+        the remote server.
+
+        :param str release_id: Timestamp-based identifier for this
+            deployment. If this ID corresponds to a directory that already
+            exists, contents of the local directory will be copied into
+            this directory.
+        :return: The results of the upload command using Fabric. This return
+            value is an iterable of the paths of all files uploaded on the remote
+            server.
+        """
+        release_path = os.path.join(self._releases, release_id)
+        if not self._runner.exists(release_path):
+            self._runner.run("mkdir -p '{0}'".format(release_path))
+
+        # Make sure to remove any user supplied globs or trailing slashes
+        # so that we can ensure exactly the glob behavior we want from the
+        # put command.
+        local_path = self._local_path.strip('*').strip(os.path.sep)
+        return self._runner.put(os.path.join(local_path, '*'), release_path)
 
 
 class LocalArtifactTransfer(object):
@@ -223,22 +286,3 @@ class LocalArtifactTransfer(object):
         self._runner.run("rm -rf '{0}'".format(self._remote_dest))
         return False
 
-
-class StaticFileInstallation(ProjectBaseMixin):
-    def __init__(self, base, local_path, runner=None):
-        super(StaticFileInstallation, self).__init__(base)
-        self._local_path = local_path
-        self._runner = runner if runner is not None else FabRunner()
-
-    def install(self, release_id):
-        pass
-
-
-class GitRepoInstallation(ProjectBaseMixin):
-    def __init__(self, base, repo_url, runner=None):
-        super(GitRepoInstallation, self).__init__(base)
-        self._repo_url = repo_url
-        self._runner = runner if runner is not None else FabRunner()
-
-    def install(self, release_id):
-        pass

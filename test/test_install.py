@@ -108,6 +108,51 @@ class TestVirtualEnvInstallation(object):
             "--no-index --find-links '/tmp/wheelhouse' 'foo'")
 
 
+class TestStaticFileInstallation(object):
+    def setup(self):
+        self.runner = mock.Mock(spec=tunic.core.FabRunner)
+
+    def test_missing_base(self):
+        with pytest.raises(ValueError):
+            tunic.install.StaticFileInstallation(None, 'foo')
+
+    def test_missing_local_path(self):
+        with pytest.raises(ValueError):
+            tunic.install.StaticFileInstallation('foo', None)
+
+    def test_install_directory_does_not_exist(self):
+        self.runner.exists.return_value = False
+
+        installer = tunic.install.StaticFileInstallation(
+            '/srv/www/myapp', 'mystaticsite', runner=self.runner)
+        installer.install('20141011145205')
+
+        self.runner.run.assert_called_once_with(
+            "mkdir -p '/srv/www/myapp/releases/20141011145205'")
+        self.runner.put.assert_called_once_with(
+            'mystaticsite/*', '/srv/www/myapp/releases/20141011145205')
+
+    def test_install_directory_exists_local_path_has_glob(self):
+        self.runner.exists.return_value = True
+
+        installer = tunic.install.StaticFileInstallation(
+            '/srv/www/myapp', 'mystaticsite*', runner=self.runner)
+        installer.install('20141011145205')
+
+        self.runner.put.assert_called_once_with(
+            'mystaticsite/*', '/srv/www/myapp/releases/20141011145205')
+
+    def test_install_directory_exists_local_path_trailing_slash(self):
+        self.runner.exists.return_value = True
+
+        installer = tunic.install.StaticFileInstallation(
+            '/srv/www/myapp', 'mystaticsite/', runner=self.runner)
+        installer.install('20141011145205')
+
+        self.runner.put.assert_called_once_with(
+            'mystaticsite/*', '/srv/www/myapp/releases/20141011145205')
+
+
 class TestLocalArtifactTransfer(object):
     def setup(self):
         self.runner = mock.Mock(spec=tunic.core.FabRunner)
