@@ -54,7 +54,6 @@ Contents
     design
     usage
     api
-    contributing
     changes
 
 Indices and tables
