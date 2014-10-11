@@ -1,6 +1,3 @@
-# Our Travis CI config that delegates most of the logistics
-# of running our unit tests for multiple interpreters to the
-# tox tool.
 language: python
 
 env:
@@ -8,17 +5,11 @@ env:
   - TOXENV=py27
   - TOXENV=pypy
 
-# Only build master, don't want noise from experimental stuff
 branches:
   only:
     - master
 
-# command to install dependencies
 install:
-  # Just install tox here and let it manage all our dependencies and
-  # environment set up (via tox.ini). Note that we override the default
-  # list of environments for tox run in via the TOXENV variable above.
   - "pip install tox"
 
-# command to run tests.
 script: tox test
