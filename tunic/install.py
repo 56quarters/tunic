@@ -11,7 +11,7 @@
 tunic.install
 ~~~~~~~~~~~~~
 
-Installation on remote machines.
+Perform installations on remote machines.
 """
 
 import os.path

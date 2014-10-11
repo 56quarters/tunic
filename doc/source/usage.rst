@@ -10,6 +10,11 @@ This guide will go over each of the distinct components of the Tunic library
 and how to use them individually. Then we'll look at how to use them all
 together as part of the same deploy process.
 
+.. note::
+    All functionality meant to be used by consumers of the Tunic library is
+    exposed in the :mod:`tunic.api` module. Anything not contained in this
+    module should be considered private and subject to change.
+
 get_releases_path and get_current_path
 --------------------------------------
 
