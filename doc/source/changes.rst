@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-0.5.0 - Future release
-----------------------
+0.5.0 - 2014-10-11
+------------------
 * **Breaking change**: Change behavior of :class:`tunic.api.LocalArtifactTransfer`
   to yield the final destination path on the remote server (a combination of the
   remote path and right-most component of the local path). This new value will
