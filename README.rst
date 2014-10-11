@@ -1,8 +1,6 @@
 Tunic
 =====
 
-**WARNING** - This is pre-alpha software and subject to changes and/or bugs.
-
 Tunic is a library built on Fabric for performing common tasks related
 to deploying a code base on multiple remote servers.
 
@@ -10,11 +8,15 @@ It's designed so that you can make use of as much or as little of
 its functionality as you'd like, the choice is yours.
 
 It only requires the Fabric library as a dependency and can be installed
-from the Python Package Index (PyPI) using the pip tool like so. ::
+from the Python Package Index (PyPI) using the pip tool like so.
 
-    pip install tunic
+.. code-block:: bash
 
-You could then make use of it in your deploy process like so. ::
+    $ pip install tunic
+
+You could then make use of it in your deploy process like so.
+
+.. code-block:: python
 
     from fabric.api import task
     from tunic.api import get_release_id, ReleaseManager, VirtualEnvInstallation
