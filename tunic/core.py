@@ -218,7 +218,10 @@ class ReleaseManager(ProjectBaseMixin):
         :param str base: Absolute path to the root of the code deploy
         :param FabRunner runner: Optional runner to use for executing
             remote commands to manage releases.
-        :raises ValueError: If the base directory isn't specified
+        :raises ValueError: If the base directory isn't specified.
+
+        .. versionchanged:: 0.3.0
+            :class:`ValueError` is now raised for empty ``base`` values.
         """
         super(ReleaseManager, self).__init__(base)
         self._runner = runner if runner is not None else FabRunner()
@@ -336,6 +339,9 @@ class ProjectSetup(ProjectBaseMixin):
         :param FabRunner runner: Optional runner to use for executing
             remote commands to set up the deploy.
         :raises ValueError: If the base directory isn't specified
+
+        .. versionchanged:: 0.3.0
+            :class:`ValueError` is now raised for empty ``base`` values.
         """
         super(ProjectSetup, self).__init__(base)
         self._runner = runner if runner is not None else FabRunner()

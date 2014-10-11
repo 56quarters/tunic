@@ -42,6 +42,8 @@ class VirtualEnvInstallation(ProjectBaseMixin):
 
     See :doc:`design` for more information about the expected directory
     structure for deployments.
+
+    .. versionadded:: 0.3.0
     """
 
     def __init__(self, base, packages, sources=None, venv_path=None, runner=None):
@@ -62,9 +64,13 @@ class VirtualEnvInstallation(ProjectBaseMixin):
             PATH on the remote server.
         :param FabRunner runner: Optional runner to use for executing
             remote and local commands to perform the installation.
-        :raises ValueError: If no packages are given, packages is not an iterable
-            collection or some kind, or if sources is specified but not an iterable
-            collection of some kind.
+        :raises ValueError:  If the base directory isn't specified, if no packages
+            are given, packages is not an iterable collection or some kind, or if
+            sources is specified but not an iterable collection of some kind.
+
+        .. versionchanged:: 0.4.0
+            Allow the path to the ``virtualenv`` script on the remote server to be
+            specified.
         """
         super(VirtualEnvInstallation, self).__init__(base)
 
@@ -143,6 +149,8 @@ class StaticFileInstallation(ProjectBaseMixin):
 
     See :doc:`design` for more information about the expected directory
     structure for deployments.
+
+    .. versionadded:: 0.5.0
     """
 
     def __init__(self, base, local_path, runner=None):
@@ -238,6 +246,8 @@ class LocalArtifactTransfer(object):
     The path yielded by the context  will be removed when the context
     manager exits. The local artifacts are not modified or removed on
     exit.
+
+    .. versionadded:: 0.4.0
     """
 
     def __init__(self, local_path, remote_path, runner=None):
@@ -256,6 +266,10 @@ class LocalArtifactTransfer(object):
             tailing slash).
         :param FabRunner runner: Optional runner to use for executing
             commands to transfer artifacts.
+
+        .. versionchanged:: 0.5.0
+            Trailing slashes are now removed from ``local_path`` and
+            ``remote_path``.
         """
         self._local_path = local_path.rstrip(os.path.sep)
         self._remote_path = remote_path.rstrip(os.path.sep)
