@@ -14,10 +14,8 @@ and consistent way to interact with the library.
     :members:
     :exclude-members: split_by_line, FabRunner, ProjectBaseMixin
     :undoc-members:
-    :show-inheritance:
 
 .. automodule:: tunic.install
     :special-members: __init__,__call__,__enter__,__exit__
     :members:
     :undoc-members:
-    :show-inheritance:
