@@ -46,7 +46,7 @@ For this example, let's assume you're deploying your project to ``/srv/www/myapp
   by each smaller component down to the second. The timezone used to generate this
   timestamp component doesn't matter as long as you always use the same one.
 
-  The name for each deploy will be generated for you if you use the
+  The name for each deploy will be generated for you (in UTC) if you use the
   :func:`tunic.core.get_release_id` function. This is required to ensure that we
   can determine the time deploys were done relative to each other.
 

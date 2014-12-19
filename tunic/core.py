@@ -124,6 +124,9 @@ def get_release_id(version=None):
     If the version is not supplied the release ID will be of the
     form '$timestamp'. For example, ``20140214231159``.
 
+    The timestamp component of this release ID will be generated
+    using the current time in UTC.
+
     :param str version: Version to include in the release ID
     :return: Unique name for this particular deployment
     :rtype: str
