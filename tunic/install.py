@@ -30,7 +30,7 @@ def _is_iterable(val):
 
 
 class VirtualEnvInstallation(ProjectBaseMixin):
-    """Install one or multiple packages into a remote virtual environment.
+    """Install one or multiple packages into a remote Python virtual environment.
 
     If the remote virtual environment does not already exist, it will be
     created during the install process.
