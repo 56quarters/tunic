@@ -39,10 +39,17 @@ You could then make use of it in your deploy process like so.
 The above snippet is just the start, take a look around the code base
 for more methods that can save you work in your deploy process.
 
+Documentation
+-------------
+
 The latest documentation is available at http://tunic.readthedocs.org/en/latest/
+
+Source
+------
 
 The source is available at https://github.com/tshlabs/tunic
 
-The change log is available at http://tunic.readthedocs.org/en/latest/changes.html
+Changes
+-------
 
-Enjoy!
+The change log is available at http://tunic.readthedocs.org/en/latest/changes.html
