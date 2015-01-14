@@ -65,7 +65,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
         :param FabRunner runner: Optional runner to use for executing
             remote and local commands to perform the installation.
         :raises ValueError:  If the base directory isn't specified, if no packages
-            are given, packages is not an iterable collection or some kind, or if
+            are given, packages is not an iterable collection of some kind, or if
             sources is specified but not an iterable collection of some kind.
 
         .. versionchanged:: 0.4.0
@@ -108,7 +108,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
         environment will be created according to the standard Tunic
         directory structure (see :doc:`design`).
 
-        If ``update=True`` is passed, packages will be updated to the
+        If ``upgrade=True`` is passed, packages will be updated to the
         most recent version if they are already installed in the virtual
         environment.
 
