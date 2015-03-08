@@ -71,6 +71,19 @@ Since Tunic is built on Fabric, it inherits the following behavior.
   is also not thread safe.
 
 .. _context managers: http://docs.fabfile.org/en/latest/api/core/context_managers.html
-
 .. _thread safe: http://www.fabfile.org/faq.html#is-fabric-thread-safe
 
+
+Versions
+--------
+
+Tunic uses `semantic versioning`_ of the form ``major.minor.patch``. All backwards
+incompatible changes after version ``1.0.0`` will increment the major version number.
+All backwards incompatible changes prior to version ``1.0.0`` will increment the minor
+version number.
+
+Since this is a Python project, only the subset of the semantic versioning spec that is
+compatible with `PEP-440`_ will be used.
+
+.. _semantic versioning: http://semver.org/
+.. _PEP-440: https://www.python.org/dev/peps/pep-0440/
