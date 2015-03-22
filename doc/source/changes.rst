@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.5.1 - Future release
+----------------------
+* Packaging fixes (use ``twine`` for uploads to PyPI, stop using the setup.py
+  ``register`` command).
+
 0.5.0 - 2014-10-11
 ------------------
 * **Breaking change**: Change behavior of :class:`tunic.install.LocalArtifactTransfer`
