@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-1.0.0 - 2015-04-04
+1.0.1 - 2015-04-04
 ------------------
 * This is the first stable release of Tunic. From this point on, all breaking
   changes will only be made in major version releases.
