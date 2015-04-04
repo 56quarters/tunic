@@ -1,10 +1,16 @@
 Change Log
 ==========
 
-0.5.1 - Future release
-----------------------
+1.0.0 - 2015-04-04
+------------------
+* This is the first stable release of Tunic. From this point on, all breaking
+  changes will only be made in major version releases.
+
+  This release is almost functionally equivalent to the ``0.5.0`` release. There
+  are only minor changes to the build process and project documentation.
 * Packaging fixes (use ``twine`` for uploads to PyPI, stop using the setup.py
   ``register`` command).
+* Assorted documentation updates.
 
 0.5.0 - 2014-10-11
 ------------------

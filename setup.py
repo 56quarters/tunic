@@ -2,6 +2,7 @@
 #
 
 from __future__ import print_function
+import codecs
 
 from setuptools import setup, find_packages
 
@@ -14,7 +15,7 @@ EMAIL = 'projects@tshlabs.org'
 URL = 'http://www.tshlabs.org/'
 LICENSE = 'MIT'
 CLASSIFIERS = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX",
     "Programming Language :: Python",
@@ -25,9 +26,8 @@ CLASSIFIERS = [
 
 
 def get_contents(filename):
-    """Get the contents of the given file."""
-    with open(filename, 'rb') as handle:
-        return handle.read().decode('utf-8')
+    with codecs.open(filename, 'rb', encoding='utf-8') as handle:
+        return handle.read()
 
 
 REQUIRES = [
