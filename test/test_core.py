@@ -220,9 +220,14 @@ def test_get_releases_path():
     assert '/var/www/test/releases' == tunic.core.get_releases_path('/var/www/test')
 
 
-def test_get_release_id_with_version():
+def test_get_release_id_with_string_version():
     assert re.match(
         '^[\d]+\-local$', tunic.core.get_release_id('local')) is not None
+
+
+def test_get_release_id_with_numeric_version():
+    assert re.match(
+        '^[\d]+\-1\.3\.2$', tunic.core.get_release_id('1.3.2')) is not None
 
 
 def test_get_release_id_no_version():

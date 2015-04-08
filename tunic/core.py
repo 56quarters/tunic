@@ -135,7 +135,7 @@ def get_release_id(version=None):
 
     if version is None:
         return ts
-    return '%s-%s' % (ts, version)
+    return '{0}-{1}'.format(ts, version)
 
 
 class FabRunner(object):
