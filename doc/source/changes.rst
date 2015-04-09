@@ -5,7 +5,8 @@ Change Log
 ----------------------
 * **Bug** - Fix bug in :func:`tunic.core.get_current_path` and
   :func:`tunic.core.get_releases_path` where input was not being checked to ensure
-  it was a valid base directory.
+  it was a valid base directory. :class:`ValueError` will now be raised for invalid
+  (blank or ``None``) values.
 * Added fuzz testing to some parts of the Tunic unit test suite.
 
 1.0.1 - 2015-04-04

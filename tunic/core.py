@@ -88,8 +88,11 @@ def get_current_path(base):
     See :doc:`design` for more information about the expected directory
     structure for deployments.
 
+    .. versionchanged:: 1.0.2
+        :class:`ValueError` is now raised for empty ``base`` values.
+
     :param str base: Project base directory (absolute path)
-    :raises ValueError: If ``base`` is None or empty
+    :raises ValueError: If the base directory isn't specified
     :return: Path to the 'current' symlink
     :rtype: str
     """
@@ -109,8 +112,11 @@ def get_releases_path(base):
     See :doc:`design` for more information about the expected directory
     structure for deployments.
 
+    .. versionchanged:: 1.0.2
+        :class:`ValueError` is now raised for empty ``base`` values.
+
     :param str base: Project base directory (absolute path)
-    :raises ValueError: If ``base`` is None or empty
+    :raises ValueError: If the base directory isn't specified
     :return: Path to the releases directory
     :rtype: str
     """
@@ -227,7 +233,7 @@ class ReleaseManager(ProjectBaseMixin):
         :param str base: Absolute path to the root of the code deploy
         :param FabRunner runner: Optional runner to use for executing
             remote commands to manage releases.
-        :raises ValueError: If the base directory isn't specified.
+        :raises ValueError: If the base directory isn't specified
 
         .. versionchanged:: 0.3.0
             :class:`ValueError` is now raised for empty ``base`` values.
