@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
 import re
+import sys
 
 import mock
 import tunic.core
-
-from hypothesis import assume, given
 
 
 class StrDecorator(str):
@@ -215,19 +214,6 @@ def test_split_by_line_unix():
     assert ['foo', 'bar'] == tunic.core.split_by_line('foo \n bar')
 
 
-@given(str)
-def test_split_by_line_fuzz(text):
-    lines = tunic.core.split_by_line(text)
-    assert isinstance(lines, list)
-
-
-@given(str)
-def test_split_by_line_non_blank_fuzz(text):
-    assume(text.strip())
-    lines = tunic.core.split_by_line(text)
-    assert len(lines) > 0
-
-
 def test_get_current_path():
     assert '/var/www/test/current' == tunic.core.get_current_path('/var/www/test')
 
@@ -240,13 +226,6 @@ def test_get_current_path_blank():
 def test_get_current_path_none():
     with pytest.raises(ValueError):
         tunic.core.get_current_path(None)
-
-
-@given(str)
-def test_get_current_path_fuzz(base):
-    assume(base)
-    current = tunic.core.get_current_path(base)
-    assert current.endswith('/current')
 
 
 def test_get_releases_path():
@@ -263,13 +242,6 @@ def test_get_releases_path_none():
         tunic.core.get_releases_path(None)
 
 
-@given(str)
-def test_get_releases_path_fuzz(base):
-    assume(base)
-    current = tunic.core.get_releases_path(base)
-    assert current.endswith('/releases')
-
-
 def test_get_release_id_with_string_version():
     assert re.match(
         '^[\d]+\-local$', tunic.core.get_release_id('local')) is not None
@@ -280,13 +252,47 @@ def test_get_release_id_with_numeric_version():
         '^[\d]+\-1\.3\.2$', tunic.core.get_release_id('1.3.2')) is not None
 
 
-@given(str)
-def test_get_release_id_with_version_fuzz(version):
-    assume(version is not None)
-    release_id = tunic.core.get_release_id(version)
-    assert release_id.endswith('-' + version)
-
-
 def test_get_release_id_no_version():
     assert re.match(
         '^[\d]+$', tunic.core.get_release_id()) is not None
+
+
+# Only execute fuzz tests if this is a version of Python 2.7 and above. We do
+# this because the hypothesis library only supports 2.7 and 3.2+ but we want to
+# target 2.6 as well. It doesn't seem super clean to run tests conditionally,
+# but some fuzz testing is better than no fuzz testing.
+if sys.version_info >= (2, 7):
+    from hypothesis import assume, given
+
+    @given(str)
+    def test_split_by_line_fuzz(text):
+        lines = tunic.core.split_by_line(text)
+        assert isinstance(lines, list)
+
+
+    @given(str)
+    def test_split_by_line_non_blank_fuzz(text):
+        assume(text.strip())
+        lines = tunic.core.split_by_line(text)
+        assert len(lines) > 0
+
+
+    @given(str)
+    def test_get_current_path_fuzz(base):
+        assume(base)
+        current = tunic.core.get_current_path(base)
+        assert current.endswith('/current')
+
+
+    @given(str)
+    def test_get_releases_path_fuzz(base):
+        assume(base)
+        current = tunic.core.get_releases_path(base)
+        assert current.endswith('/releases')
+
+
+    @given(str)
+    def test_get_release_id_with_version_fuzz(version):
+        assume(version is not None)
+        release_id = tunic.core.get_release_id(version)
+        assert release_id.endswith('-' + version)
