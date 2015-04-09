@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+1.0.2 - Future release
+----------------------
+* **Bug** - Fix bug in :func:`tunic.core.get_current_path` and
+  :func:`tunic.core.get_releases_path` where input was not being checked to ensure
+  it was a valid base directory.
+* Added fuzz testing to some parts of the Tunic unit test suite.
+
 1.0.1 - 2015-04-04
 ------------------
 * This is the first stable release of Tunic. From this point on, all breaking

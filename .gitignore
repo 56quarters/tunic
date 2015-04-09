@@ -16,3 +16,5 @@ MANIFEST
 *.min.css
 wheelhouse
 doc/build
+.hypothesis
+build

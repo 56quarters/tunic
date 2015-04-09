@@ -89,9 +89,12 @@ def get_current_path(base):
     structure for deployments.
 
     :param str base: Project base directory (absolute path)
+    :raises ValueError: If ``base`` is None or empty
     :return: Path to the 'current' symlink
     :rtype: str
     """
+    if not base:
+        raise ValueError("You must specify a project base directory")
     return os.path.join(base, 'current')
 
 
@@ -107,9 +110,12 @@ def get_releases_path(base):
     structure for deployments.
 
     :param str base: Project base directory (absolute path)
+    :raises ValueError: If ``base`` is None or empty
     :return: Path to the releases directory
     :rtype: str
     """
+    if not base:
+        raise ValueError("You must specify a project base directory")
     return os.path.join(base, 'releases')
 
 
@@ -191,7 +197,7 @@ class ProjectBaseMixin(object):
         """Set the project directories based on a given root.
 
         :param str base: Project root directories.
-        :raises ValueError: If the base directory isn't specified
+        :raises ValueError: If ``base`` is None or empty
         """
         if not base:
             raise ValueError("You must specify a project base directory")
