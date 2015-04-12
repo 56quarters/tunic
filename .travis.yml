@@ -2,8 +2,8 @@ language: python
 
 env:
   - TOXENV=py26
-  - TOXENV=py27
-  - TOXENV=pypy
+  - TOXENV=py27,fuzz
+  - TOXENV=pypy,fuzz
 
 branches:
   only:
@@ -12,4 +12,4 @@ branches:
 install:
   - "pip install tox"
 
-script: tox test
+script: tox
