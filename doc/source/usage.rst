@@ -365,7 +365,7 @@ example below!
 
     DEPLOY_OWNER = 'root:www'
 
-    # URLs do download artifacts from. Notice that we don't
+    # URLs to download artifacts from. Notice that we don't
     # include version numbers in these URls. We'll use the
     # version specified as part of the deploy to build source
     # URLs below specific to our version.
@@ -376,7 +376,7 @@ example below!
     def deploy(version):
         # Ensure that the correct directory structure exists on
         # the remote server and attempt to set the permissions of
-        # it do something reasonable.
+        # it to something reasonable.
         setup = ProjectSetup(APP_BASE)
         setup.setup_directories()
         setup.set_permissions(DEPLOY_OWNER)
@@ -417,9 +417,9 @@ example below!
         previous = release_manager.get_previous_release()
 
         # If the previous version couldn't be determined for some reason,
-        # we can rollback so we just given up now. This can happen when
+        # we can't rollback so we just given up now. This can happen when
         # there's only a single deployment, when the 'current' symlink
-        # doesn't exist, when deploys aren't named correct, etc.
+        # doesn't exist, when deploys aren't named correctly, etc.
         if previous is None:
             warn("No previous release, can't rollback!")
             return
