@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
 import re
-import sys
 
 import mock
 import tunic.core
