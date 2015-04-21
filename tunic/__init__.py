@@ -2,7 +2,7 @@
 #
 # Tunic
 #
-# Copyright 2014 TSH Labs <projects@tshlabs.org>
+# Copyright 2014-2015 TSH Labs <projects@tshlabs.org>
 #
 # Available under the MIT license. See LICENSE for details.
 #
