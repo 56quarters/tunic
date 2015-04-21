@@ -3,7 +3,8 @@
 from fabric.api import (
     lcd,
     local,
-    task)
+    task,
+    warn_only)
 
 
 @task
@@ -20,6 +21,11 @@ def clean():
 def docs():
     with lcd('doc'):
         local('make html')
+
+@task
+def lint():
+    with warn_only():
+        local('pylint --rcfile .pylintrc tunic')
 
 
 @task

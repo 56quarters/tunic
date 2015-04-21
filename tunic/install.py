@@ -46,6 +46,7 @@ class VirtualEnvInstallation(ProjectBaseMixin):
     .. versionadded:: 0.3.0
     """
 
+    # pylint: disable=too-many-arguments
     def __init__(self, base, packages, sources=None, venv_path=None, runner=None):
         """Set the project base directory, packages to install, and optionally
         alternative sources from which to download dependencies and path to the
@@ -204,6 +205,7 @@ class StaticFileInstallation(ProjectBaseMixin):
         return self._runner.put(os.path.join(local_path, '*'), release_path)
 
 
+# pylint: disable=too-few-public-methods
 class LocalArtifactTransfer(object):
     """Transfer a local artifact or directory of artifacts to a remote
     server when entering a context manager and clean the transferred files

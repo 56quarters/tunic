@@ -42,6 +42,7 @@ PERMS_FILE_DEFAULT = 'u+rw,g+rw,o+r'
 PERMS_DIR_DEFAULT = 'u+rwx,g+rws,o+rx'
 RELEASE_DATE_FMT = '%Y%m%d%H%M%S'
 
+# pylint: disable=invalid-name
 _strip_all = lambda parts: [part.strip() for part in parts]
 
 
@@ -190,6 +191,7 @@ class FabRunner(object):
         return put(*args, **kwargs)
 
 
+# pylint: disable=too-few-public-methods
 class ProjectBaseMixin(object):
     """Base for setting project directories from a given
     project root directory.
@@ -301,6 +303,7 @@ class ReleaseManager(ProjectBaseMixin):
         """
         self._set_current_release(release_id, str(uuid.uuid4()))
 
+    # pylint: disable=missing-docstring
     def _set_current_release(self, release_id, rand):
         # Set the current release with a specific random file
         # name. Useful for unit testing when we need to check
