@@ -23,6 +23,7 @@ from .core import (
 
 from .install import (
     LocalArtifactTransfer,
+    LocalArtifactInstallation,
     StaticFileInstallation,
     VirtualEnvInstallation)
 
@@ -32,7 +33,8 @@ __all__ = [
     'get_release_id',
     'ReleaseManager',
     'ProjectSetup',
-    'LocalArtifactTransfer',
+    'LocalArtifactInstallation',
     'StaticFileInstallation',
-    'VirtualEnvInstallation'
+    'VirtualEnvInstallation',
+    'LocalArtifactTransfer'
 ]

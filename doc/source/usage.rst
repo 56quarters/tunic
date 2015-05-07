@@ -23,7 +23,7 @@ directory of your project, they'll give you paths to components of the directory
 structure that the rest of the Tunic library expects. They are code to enforce
 assumptions made by the library.
 
-Below is an example of using the :func:`tunic.api.get_releases_path` method to find
+Below is an example of using the :func:`tunic.core.get_releases_path` method to find
 all releases of a particular project.
 
 .. code-block:: python
@@ -39,7 +39,7 @@ all releases of a particular project.
         releases = run('ls -1r ' + releases_path)
         return releases.split()
 
-Below is an example of using the :func:`tunic.api.get_current_path` method to
+Below is an example of using the :func:`tunic.core.get_current_path` method to
 find the deployment that is being actively served.
 
 .. code-block:: python
@@ -58,7 +58,7 @@ find the deployment that is being actively served.
 get_release_id
 --------------
 
-The :func:`tunic.api.get_release_id` method is responsible for generating a
+The :func:`tunic.core.get_release_id` method is responsible for generating a
 unique name for each deployment of a project. It generates a timestamp based
 name, with an optional version component. The timestamp component is built with
 the largest period of time first (the current year), followed by each smaller
@@ -69,7 +69,7 @@ to keep track of when each deployment was made. Thus we are able to easily figur
 out which deployments are the oldest, which particular deployment came before the
 'current' one, etc.
 
-Below is an example of using the :func:`tunic.api.get_release_id` method to set up
+Below is an example of using the :func:`tunic.core.get_release_id` method to set up
 a new deployment.
 
 .. _`ISO 8601`: http://en.wikipedia.org/wiki/ISO_8601
@@ -94,7 +94,7 @@ a new deployment.
 ReleaseManager
 --------------
 
-The :class:`tunic.api.ReleaseManager` class is responsible for inspecting and
+The :class:`tunic.core.ReleaseManager` class is responsible for inspecting and
 manipulating previous deployments and the current deployment on a remote server.
 
 In order manipulate deployments like this, the ReleaseManager requires that they
@@ -115,8 +115,8 @@ a server.
 
 
 Below is an example of creating a "rollback" task in Fabric for switching to the
-previous deployment of your project that uses the  :meth:`tunic.api.ReleaseManager.get_previous_release`
-and :meth:`tunic.api.ReleaseManager.set_current_release` methods.
+previous deployment of your project that uses the  :meth:`tunic.core.ReleaseManager.get_previous_release`
+and :meth:`tunic.core.ReleaseManager.set_current_release` methods.
 
 .. code-block:: python
 
@@ -138,7 +138,7 @@ and :meth:`tunic.api.ReleaseManager.set_current_release` methods.
 
 The ReleaseManager can also remove old deployments. To do this, you must
 have named the deployments with a timestamp based prefix. If you've used
-:func:`tunic.api.get_release_id` to name your deployments, this is handled
+:func:`tunic.core.get_release_id` to name your deployments, this is handled
 for you.
 
 .. code-block:: python
@@ -156,7 +156,7 @@ for you.
 ProjectSetup
 ------------
 
-The :class:`tunic.api.ProjectSetup` class is responsible for creating the
+The :class:`tunic.core.ProjectSetup` class is responsible for creating the
 required directory structure for a project and ensuring that permissions
 and ownership is consistent before and after a deploy.
 
@@ -168,7 +168,7 @@ structure and changing of ownership and permissions of the project deploys.
 If the user doing the deploy will not have sudo permissions, the methods
 can be passed the ``use_sudo=False`` keyword argument to instruct them not
 to use sudo, but instead use the Fabric ``run`` command. When using the ``run``
-command, the :meth:`tunic.api.ProjectSetup.set_permissions` method will not
+command, the :meth:`tunic.core.ProjectSetup.set_permissions` method will not
 attempt to change the owner of the project deploys, only the permissions.
 
 As with most parts of the Tunic library, use of this class for project deploy
@@ -202,7 +202,7 @@ before and after a deploy, assuming the user doing the deploy has sudo permissio
 LocalArtifactTransfer
 ---------------------
 
-The :class:`tunic.api.LocalArtifactTransfer` class allows you to transfer
+The :class:`tunic.install.LocalArtifactTransfer` class allows you to transfer
 locally built artifacts to a remote server and clean them up afterwards in
 the scope of a Python `context manager`_. With more advanced deploy setups
 that use a centralized artifact repository, this class isn't usually needed.
@@ -238,10 +238,41 @@ on the remote machine is removed.
 .. _`context manager`:  http://effbot.org/zone/python-with-statement.htm
 
 
+LocalArtifactInstallation
+-------------------------
+
+The :class:`tunic.install.LocalArtifactInstallation` class is used to install
+a single local file (Go binary, Java JAR or WAR) on a remote server. Optionally,
+the artifact can be renamed when it is installed on the remote server.
+
+The ``LocalArtifactInstallation`` class assumes that directories for a project
+are setup as described in :doc:`design`.
+
+Below is an example of using the ``LocalArtifactInstallation`` class to install
+a single Java JAR file to a release directory on a remote server.
+
+.. code-block:: python
+
+    from fabric.api import task
+    from tunic.api import LocalArtifactInstallation
+
+    APP_BASE = '/srv/www/app.example.com'
+
+    LOCAL_FILE = '/tmp/build/myapp/target/myapp-0.1.0.jar'
+
+    @task
+    def install():
+        installation = LocalArtifactInstallation(
+            APP_BASE, LOCAL_FILE, remote_name='myapp.jar')
+        installation.install('20141002111442')
+
+After running the ``install`` task above, the JAR would be installed to
+``/srv/www/app.example.com/releases/20141002111442/myapp.jar``.
+
 StaticFileInstallation
 ----------------------
 
-The :class:`tunic.api.StaticFileInstallation` class is used to install
+The :class:`tunic.install.StaticFileInstallation` class is used to install
 static files (maybe HTML and CSS files created by a static site generator,
 like Nikola_).
 
@@ -265,12 +296,15 @@ a directory of static files to a release directory on a remote server.
         installation = StaticFileInstallation(APP_BASE, LOCAL_FILES)
         installation.install('20141002111442')
 
+After running the ``install`` task above, the contents of ``~/myblog/output`` would
+be in ``/srv/www/blog.example.com/releases/20141002111442``.
+
 .. _Nikola: http://getnikola.com/
 
 VirtualEnvInstallation
 ----------------------
 
-The :class:`tunic.api.VirtualEnvInstallation` class is used to install one
+The :class:`tunic.install.VirtualEnvInstallation` class is used to install one
 or multiple packages into a Python `virtual environment`_. The virtual
 environment is typically a particular deployment of your project.
 

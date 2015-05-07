@@ -153,6 +153,55 @@ class TestStaticFileInstallation(object):
             'mystaticsite/*', '/srv/www/myapp/releases/20141011145205')
 
 
+class TestLocalArtifactInstalltion(object):
+    def setup(self):
+        self.runner = mock.Mock(spec=tunic.core.FabRunner)
+
+    def test_missing_base(self):
+        with pytest.raises(ValueError):
+            tunic.install.LocalArtifactInstallation(None, 'foo')
+
+    def test_missing_local_path(self):
+        with pytest.raises(ValueError):
+            tunic.install.LocalArtifactInstallation('foo', None)
+
+    def test_install_directory_does_not_exist(self):
+        self.runner.exists.return_value = False
+
+        installer = tunic.install.LocalArtifactInstallation(
+            '/srv/www/myapp', '/tmp/someapp-1.2.3.jar', runner=self.runner)
+        installer.install('20141011145205')
+
+        self.runner.run.assert_called_once_with(
+            "mkdir -p '/srv/www/myapp/releases/20141011145205'")
+        self.runner.put.assert_called_once_with(
+            '/tmp/someapp-1.2.3.jar', '/srv/www/myapp/releases/20141011145205')
+
+    def test_install_rename_artifact(self):
+        self.runner.exists.return_value = True
+
+        installer = tunic.install.LocalArtifactInstallation(
+            '/srv/www/myapp', '/tmp/someapp-1.2.3.jar',
+            remote_name='someapp.jar', runner=self.runner)
+        installer.install('20141011145205')
+
+        self.runner.put.assert_called_once_with(
+            '/tmp/someapp-1.2.3.jar',
+            '/srv/www/myapp/releases/20141011145205/someapp.jar')
+
+    def test_install_do_not_rename(self):
+        self.runner.exists.return_value = True
+
+        installer = tunic.install.LocalArtifactInstallation(
+            '/srv/www/myapp', '/tmp/someapp-1.2.3.jar',
+            runner=self.runner)
+        installer.install('20141011145205')
+
+        self.runner.put.assert_called_once_with(
+            '/tmp/someapp-1.2.3.jar',
+            '/srv/www/myapp/releases/20141011145205')
+
+
 class TestLocalArtifactTransfer(object):
     def setup(self):
         self.runner = mock.Mock(spec=tunic.core.FabRunner)

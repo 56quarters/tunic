@@ -1,13 +1,15 @@
 Change Log
 ==========
 
-1.0.2 - Future release
+1.1.0 - Future release
 ----------------------
 * **Bug** - Fix bug in :func:`tunic.core.get_current_path` and
   :func:`tunic.core.get_releases_path` where input was not being checked to ensure
   it was a valid base directory. :class:`ValueError` will now be raised for invalid
   (blank or ``None``) values.
 * Added fuzz testing to some parts of the Tunic unit test suite.
+* Added :class:`tunic.install.LocalArtifactInstallation` for installation of single
+  local artifact onto a remote server. Useful for Go binaries or Java JARs and WARs.
 
 1.0.1 - 2015-04-04
 ------------------
