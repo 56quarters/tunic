@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-1.1.0 - Future release
-----------------------
+1.1.0 - 2015-06-03
+------------------
 * **Bug** - Fix bug in :func:`tunic.core.get_current_path` and
   :func:`tunic.core.get_releases_path` where input was not being checked to ensure
   it was a valid base directory. :class:`ValueError` will now be raised for invalid
