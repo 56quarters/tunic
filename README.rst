@@ -49,6 +49,11 @@ Source
 
 The source is available at https://github.com/tshlabs/tunic
 
+Download
+--------
+
+Python packages are available at https://pypi.python.org/pypi/tunic
+
 Changes
 -------
 
