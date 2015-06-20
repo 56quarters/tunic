@@ -1,8 +1,8 @@
 hypothesis==1.1.1
 mock==1.0.1
 pylint==1.4.3
-pytest==2.7.0
-tox==1.9.2
+pytest==2.7.1
+tox==2.1.0
 Sphinx==1.3.1
 sphinx-rtd-theme==0.1.8
 twine==1.5.0
