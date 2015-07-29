@@ -132,10 +132,16 @@ def get_release_id(version=None):
     or release.
 
     If a version is supplied, the release ID will be of the form
-    '$timestamp-$version'. For example,  ``20140214231159-1.4.1``.
+    '$timestamp-$version'. For example:
+
+    >>> get_release_id(version='1.4.1')
+    '20140214231159-1.4.1'
 
     If the version is not supplied the release ID will be of the
-    form '$timestamp'. For example, ``20140214231159``.
+    form '$timestamp'. For example:
+
+    >>> get_release_id()
+    '20140214231159'
 
     The timestamp component of this release ID will be generated
     using the current time in UTC.
