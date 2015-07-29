@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.1.1 - Future release
+----------------------
+* Minor documentation fixes.
+
 1.1.0 - 2015-06-03
 ------------------
 * **Bug** - Fix bug in :func:`tunic.core.get_current_path` and
