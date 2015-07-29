@@ -89,7 +89,7 @@ def get_current_path(base):
     See :doc:`design` for more information about the expected directory
     structure for deployments.
 
-    .. versionchanged:: 1.0.2
+    .. versionchanged:: 1.1.0
         :class:`ValueError` is now raised for empty ``base`` values.
 
     :param str base: Project base directory (absolute path)
@@ -113,7 +113,7 @@ def get_releases_path(base):
     See :doc:`design` for more information about the expected directory
     structure for deployments.
 
-    .. versionchanged:: 1.0.2
+    .. versionchanged:: 1.1.0
         :class:`ValueError` is now raised for empty ``base`` values.
 
     :param str base: Project base directory (absolute path)
