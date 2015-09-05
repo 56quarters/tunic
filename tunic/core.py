@@ -253,6 +253,8 @@ class ReleaseManager(ProjectBaseMixin):
         """Get the release ID of the "current" deployment, None if
         there is no current deployment.
 
+        This method performs one network operation.
+
         :return: Get the current release ID
         :rtype: str
         """
@@ -264,6 +266,8 @@ class ReleaseManager(ProjectBaseMixin):
     def get_releases(self):
         """Get a list of all previous deployments, newest first.
 
+        This method performs one network operation.
+
         :return: Get an ordered list of all previous deployments
         :rtype: list
         """
@@ -274,6 +278,8 @@ class ReleaseManager(ProjectBaseMixin):
         """Get the release ID of the deployment immediately
         before the "current" deployment, ``None`` if no previous
         release could be determined.
+
+        This method performs two network operations.
 
         :return: The release ID of the release previous to the
             "current" release.
@@ -304,6 +310,8 @@ class ReleaseManager(ProjectBaseMixin):
         The 'current' symlink will be updated in a way that ensures
         the switch is done atomically.
 
+        This method performs two network operations.
+
         :param str release_id: Release ID to mark as the current
             release
         """
@@ -329,6 +337,9 @@ class ReleaseManager(ProjectBaseMixin):
 
         If any of the candidates for deletion are pointed to by the
         'current' symlink, they will not be deleted.
+
+        This method performs N + 2 network operations where N is the
+        number of old releases that are cleaned up.
 
         :param int keep: Number of old releases to keep around
         """
@@ -377,6 +388,8 @@ class ProjectSetup(ProjectBaseMixin):
         By default, creation of directories is done with the Fabric
         ``sudo`` function but can optionally use the ``run`` function.
 
+        This method performs one network operation.
+
         :param bool use_sudo: If ``True``, use ``sudo()`` to create required
             directories. If ``False`` try to create directories using the
             ``run()`` command.
@@ -403,6 +416,9 @@ class ProjectSetup(ProjectBaseMixin):
         pass the ``use_sudo=False`` argument to skip trying to change the
         owner of the code deploy and to use the ``run`` function to change
         permissions.
+
+        This method performs between three and four network operations
+        depending on if ``use_sudo`` is false or true, respectively.
 
         :param str owner: User and group in the form 'owner:group' to
             set for the code deploy.
