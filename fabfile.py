@@ -38,7 +38,6 @@ def push():
 def push_tags():
     local('git push --tags origin')
     local('git push --tags github')
-    local('git push --tags bitbucket')
 
 
 @task
