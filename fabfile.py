@@ -32,7 +32,6 @@ def lint():
 def push():
     local('git push origin')
     local('git push github')
-    local('git push bitbucket')
 
 
 @task
