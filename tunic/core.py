@@ -42,8 +42,9 @@ PERMS_FILE_DEFAULT = 'u+rw,g+rw,o+r'
 PERMS_DIR_DEFAULT = 'u+rwx,g+rws,o+rx'
 RELEASE_DATE_FMT = '%Y%m%d%H%M%S'
 
-# pylint: disable=invalid-name
-_strip_all = lambda parts: [part.strip() for part in parts]
+
+def _strip_all(parts):
+    return [part.strip() for part in parts]
 
 
 def split_by_line(content):
