@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.2.1 - 2016-02-25
+------------------
+* **Bug** - Fix bug when running with older versions of Fabric that didn't define
+  a ``warn_only`` context manager. Fixes `#4 <https://github.com/tshlabs/tunic/issues/4>`_.
+
 1.2.0 - 2016-02-25
 ------------------
 * Add :class:`tunic.install.HttpArtifactInstallation` for installation of a single
@@ -31,11 +36,11 @@ Change Log
 
 0.5.0 - 2014-10-11
 ------------------
-* **Breaking change**: Change behavior of :class:`tunic.install.LocalArtifactTransfer`
+* **Breaking change** - Change behavior of :class:`tunic.install.LocalArtifactTransfer`
   to yield the final destination path on the remote server (a combination of the
   remote path and right-most component of the local path). This new value will
   be the only path removed on the remote server when the context manager exits.
-* **Breaking change**: Trailing slashes on ``local_path`` and ``remote_path``
+* **Breaking change** - Trailing slashes on ``local_path`` and ``remote_path``
   constructor arguments to :class:`tunic.install.LocalArtifactTransfer` are now removed
   before being used.
 * Add :class:`tunic.install.StaticFileInstallation` class for installation of static
