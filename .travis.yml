@@ -3,11 +3,11 @@ language: python
 matrix:
   include:
     - python: 2.6
-      env: TOXENV=py26
+      env: TOXENV=py26,fab-1.4
     - python: 2.7
-      env: TOXENV=py27,fuzz
+      env: TOXENV=py27,fab-1.4,fuzz
     - python: pypy
-      env: TOXENV=pypy,fuzz
+      env: TOXENV=pypy,fab-1.4,fuzz
 
 branches:
   only:

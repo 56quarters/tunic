@@ -26,17 +26,33 @@ try:
     from fabric.api import (
         put,
         run,
-        sudo,
-        warn_only)
+        settings,
+        sudo)
     from fabric.contrib.files import exists
 except ImportError as e:
     if os.getenv('READTHEDOCS', None) != 'True':
         raise
     put = None
     run = None
+    settings = None
     sudo = None
-    warn_only = None
     exists = None
+
+try:
+    # Older versions of Fabric didn't have a warn_only context manager
+    # so we add the definition here when using an older version.
+    from fabric.api import warn_only
+except ImportError:
+    if settings is not None:
+        # If settings is not None, we're not running on readthedocs.org and
+        # should provide an implementation of warn_only
+        warn_only = lambda: settings(warn_only=True)
+    else:
+        # Settings is None, we must be on readthedocs.org so just declare
+        # warn_only as None similar to how all the other Fabric stuff above
+        # is declared.
+        warn_only = None
+
 
 PERMS_FILE_DEFAULT = 'u+rw,g+rw,o+r'
 PERMS_DIR_DEFAULT = 'u+rwx,g+rws,o+rx'
