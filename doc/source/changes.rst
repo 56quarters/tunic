@@ -1,8 +1,11 @@
 Change Log
 ==========
 
-1.1.1 - Future release
+1.2.0 - Future release
 ----------------------
+* Add :class:`tunic.install.HttpArtifactInstallation` for installation of a single
+  artifact downloaded from an HTTP or HTTPS URL. Useful when installation artifacts
+  are stored in some central file store or repository (like Artifactory).
 * Minor documentation fixes.
 
 1.1.0 - 2015-06-03

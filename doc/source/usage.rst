@@ -269,6 +269,74 @@ a single Java JAR file to a release directory on a remote server.
 After running the ``install`` task above, the JAR would be installed to
 ``/srv/www/app.example.com/releases/20141002111442/myapp.jar``.
 
+
+HttpArtifactInstallation
+------------------------
+
+The :class:`tunic.install.HttpArtifactInstallation` class is used to install
+a single local file (Go binary, Java JAR or WAR) on a remote server after downloading
+it from an HTTP or HTTPS URL. Optionally the artifact can be renamed when it is
+installed on the remote server.
+
+The ``HttpArtifactInstallation`` class assumes that directories for a project
+are setup as described in :doc:`design`.
+
+By default downloads are performed with a ``wget`` call on the remote server.
+
+Below is an example of using the ``HttpArtifactInstallation`` class to install
+a single Java JAR file to a release directory on a remote server.
+
+.. code-block:: python
+
+    from fabric.api import task
+    from tunic.api import HttpArtifactInstallation
+
+    APP_BASE = '/srv/www/app.example.com'
+
+    ARTIFACT_URL = 'https://www.example.com/builds/myapp-0.1.0.jar'
+
+    @task
+    def install():
+        installation = HttpArtifactInstallation(
+            APP_BASE, ARTIFACT_URL, remote_name='myapp.jar')
+        installation.install('20141002111442')
+
+After running the ``install`` task above, the JAR would be installed to
+``/srv/www/app.example.com/releases/20141002111442/myapp.jar``.
+
+Up next is an example of using the ``HttpArtifactInstallation`` class with an
+alternate downloader. For this example we'll define a download function with
+the following signature (this is the interface required by
+:class:`tunic.install.HttpArtifactInstallation`).
+
+.. code-block:: python
+
+    def download(url, destination):
+        pass
+
+
+.. code-block:: python
+
+    from fabric.api import run, task
+    from tunic.api import HttpArtifactInstallation
+
+    APP_BASE = '/srv/www/app.example.com'
+
+    ARTIFACT_URL = 'https://www.example.com/builds/myapp-0.1.0.jar'
+
+    def my_downloader(url, destination):
+        return run("curl --output '{path}' '{url}'".format(
+            url=url, path=destination))
+
+    @task
+    def install():
+        installation = HttpArtifactInstallation(
+            APP_BASE, ARTIFACT_URL, remote_name='myapp.jar', downloader=my_downloader)
+        installation.install('20141002111442')
+
+After running the ``install`` task above, the JAR would be installed to
+``/srv/www/app.example.com/releases/20141002111442/myapp.jar``.
+
 StaticFileInstallation
 ----------------------
 

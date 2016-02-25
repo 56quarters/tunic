@@ -14,9 +14,10 @@ tunic.install
 Perform installations on remote machines.
 """
 
-import os.path
+from urlparse import urlparse
 
-from .core import FabRunner, ProjectBaseMixin
+import os.path
+from .core import try_repeatedly, FabRunner, ProjectBaseMixin
 
 
 def _is_iterable(val):
@@ -212,7 +213,7 @@ class LocalArtifactInstallation(ProjectBaseMixin):
     """Install a single local file into a remote release directory.
 
     This can be useful for installing applications that are typically bundled
-    as a single file, e.g. Go binaries, Java JAR or WAR files, etc.. The artifact
+    as a single file, e.g. Go binaries or Java JAR files, etc.. The artifact
     can optionally be renamed as part of the installation process.
 
     If the remote release directory does not already exist, it will be
@@ -260,8 +261,7 @@ class LocalArtifactInstallation(ProjectBaseMixin):
         system, it will be created. The directory will be created according to
         the standard Tunic directory structure (see :doc:`design`).
 
-        :param str release_id: Timestamp-based identifier for this
-            deployment.
+        :param str release_id: Timestamp-based identifier for this deployment.
         :return: The results of the ``put`` command using Fabric. This return
             value is an iterable of the paths of all files uploaded on the remote
             server.
@@ -280,6 +280,131 @@ class LocalArtifactInstallation(ProjectBaseMixin):
             destination = release_path
 
         return self._runner.put(self._local_file, destination)
+
+
+def download_url(url, destination, runner=None):
+    """Download the given URL with wget to the provided path. The command is
+    run via Fabric on the current remote machine. Therefore, the destination
+    path should be for the remote machine.
+
+    :param str url: URL to download onto the remote machine
+    :param str destination: Path to download the URL to on the remote
+        machine
+    :param FabRunner runner: Optional runner to use for executing commands.
+    :return: The results of the wget call
+    """
+    runner = runner if runner is not None else FabRunner()
+    return try_repeatedly(
+        lambda: runner.run("wget --quiet --output-document '{0}' '{1}'".format(destination, url)))
+
+
+class HttpArtifactInstallation(ProjectBaseMixin):
+    """Download and install a single file into a remote release directory.
+
+    This is useful for installing an application that is typically bundled as a
+    single file, e.g. Go binaries or Java JAR files, after downloading it from
+    some sort of artifact repository (such as a company-wide file server or artifact
+    store like Artifactory).
+
+    Downloads are performed over HTTP or HTTPS using a call to ``wget`` on the remote
+    machine by default. An alternate download method may be specified when creating a
+    new instance of this installer by providing an alternate implementation. The
+    download method is expected to conform to the following interface.
+
+    >>> def download(url, destination):
+    ...     pass
+
+    Where ``url`` is a URL to the artifact that should be downloaded and ``destination``
+    is the absolute path on the remote machine that the artifact should be downloaded
+    to. The function should return the result of the Fabric command run
+    (e.g. calling 'curl' or 'wget' with :func:`fabric.api.run`).
+
+    If the remote release directory does not already exist, it will be
+    created during the install process.
+
+    See :doc:`design` for more information about the expected directory
+    structure for deployments.
+
+    .. versionadded:: 1.2.0
+    """
+
+    def __init__(self, base, artifact_url, remote_name=None, downloader=None, runner=None):
+        """Set the project base directory on the remote server, URL to the artifact
+        that should be installed remotely, and optional file name to rename the artifact
+        to on the remote server.
+
+        :param str base: Absolute path to the root of the code deploy on
+            the remote server
+        :param str artifact_url: URL to the artifact to be downloaded and installed on
+            the remote server.
+        :param str remote_name: Optional file name for the artifact after it has
+            been installed on the remote server. For example, if the artifact should
+            always be called 'application.jar' on the remote server but might
+            be named differently ('application-1.2.3.jar') locally, you would
+            specify ``remote_name='application.jar'`` for this parameter.
+        :param callable downloader: Function to download the artifact with the
+            interface specified above. This is primarily for unit testing but
+            may be useful for users that need to be able to customize how the
+            artifact HTTP store is accessed.
+        :param FabRunner runner: Optional runner to use for executing
+            remote and local commands to perform the installation.
+        :raises ValueError: If the base directory or artifact URL isn't
+            specified.
+        """
+        super(HttpArtifactInstallation, self).__init__(base)
+
+        if not artifact_url:
+            raise ValueError("You must specify a URL")
+
+        self._artifact_url = artifact_url
+        self._remote_name = remote_name
+        self._downloader = downloader if downloader is not None else download_url
+        self._runner = runner if runner is not None else FabRunner()
+
+    @staticmethod
+    def _get_file_from_url(url):
+        """Get the filename part of the path component from a URL."""
+        path = urlparse(url).path
+        if not path:
+            raise ValueError("Could not extract path from URL '{0}'".format(url))
+        name = os.path.basename(path)
+        if not name:
+            raise ValueError("Could not extract file name from path '{0}'".format(path))
+        return name
+
+    def install(self, release_id):
+        """Download and install an artifact into the remote release directory,
+        optionally with a different name the the artifact had.
+
+        If the directory for the given release ID does not exist on the remote
+        system, it will be created. The directory will be created according to
+        the standard Tunic directory structure (see :doc:`design`).
+
+        :param str release_id: Timestamp-based identifier for this deployment.
+        :return: The results of the download function being run. This return value
+            should be the result of running a command with Fabric. By default
+            this will be the result of running ``wget``.
+        """
+        release_path = os.path.join(self._releases, release_id)
+        if not self._runner.exists(release_path):
+            self._runner.run("mkdir -p '{0}'".format(release_path))
+
+        # The artifact can optionally be renamed to something specific when
+        # downloaded on the remote server. In that case use the provided name
+        # in the download path. Otherwise, just use the last component of
+        # of the URL we're downloading.
+        if self._remote_name is not None:
+            destination = os.path.join(release_path, self._remote_name)
+        else:
+            destination = os.path.join(release_path, self._get_file_from_url(self._artifact_url))
+
+        # Note that although the default implementation of a download method
+        # accepts a FabRunner instance, we aren't passing our instance here.
+        # The reason being, that's only needed for testing the download_url
+        # method. If we were testing class, we'd mock out the download method
+        # anyway. So, it's not part of the public API of the download interface
+        # and we don't deal with it here.
+        return self._downloader(self._artifact_url, destination)
 
 
 # pylint: disable=too-few-public-methods
@@ -378,4 +503,3 @@ class LocalArtifactTransfer(object):
         """
         self._runner.run("rm -rf '{0}'".format(self._remote_dest))
         return False
-

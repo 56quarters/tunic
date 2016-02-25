@@ -12,10 +12,11 @@ and consistent way to interact with the library.
 .. automodule:: tunic.core
     :special-members: __init__,__call__,__enter__,__exit__
     :members:
-    :exclude-members: split_by_line, FabRunner, ProjectBaseMixin
+    :exclude-members: split_by_line, try_repeatedly, FabRunner, ProjectBaseMixin
     :undoc-members:
 
 .. automodule:: tunic.install
     :special-members: __init__,__call__,__enter__,__exit__
     :members:
+    :exclude-members: download_url
     :undoc-members:

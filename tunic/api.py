@@ -22,6 +22,7 @@ from .core import (
     ProjectSetup)
 
 from .install import (
+    HttpArtifactInstallation,
     LocalArtifactTransfer,
     LocalArtifactInstallation,
     StaticFileInstallation,
@@ -33,6 +34,7 @@ __all__ = [
     'get_release_id',
     'ReleaseManager',
     'ProjectSetup',
+    'HttpArtifactInstallation',
     'LocalArtifactInstallation',
     'StaticFileInstallation',
     'VirtualEnvInstallation',

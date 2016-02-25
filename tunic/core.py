@@ -14,11 +14,10 @@ tunic.core
 Core Tunic functionality.
 """
 
+import time
 import uuid
 from datetime import datetime
-
 import os.path
-
 
 try:
     # Fabric isn't available when our modules are imported during
@@ -27,8 +26,8 @@ try:
     from fabric.api import (
         put,
         run,
-        sudo)
-
+        sudo,
+        warn_only)
     from fabric.contrib.files import exists
 except ImportError as e:
     if os.getenv('READTHEDOCS', None) != 'True':
@@ -36,6 +35,7 @@ except ImportError as e:
     put = None
     run = None
     sudo = None
+    warn_only = None
     exists = None
 
 PERMS_FILE_DEFAULT = 'u+rw,g+rw,o+r'
@@ -196,6 +196,37 @@ class FabRunner(object):
     def put(*args, **kwargs):
         """Execute the Fabric :func:`put` function with the given args."""
         return put(*args, **kwargs)
+
+
+def try_repeatedly(method, max_retries=1, delay=0):
+    """Execute the given Fabric call, retrying up to a certain number of times.
+
+    The method is expected to be wrapper around a Fabric :func:`run` or :func:`sudo`
+    call that returns the results of that call. The call will be executed at least
+    once, and up to :code:`max_retries` additional times until the call executes with
+    out failing.
+
+    Optionally, a delay in seconds can be specified in between successive calls.
+
+    :param callable method: Wrapped Fabric method to execute
+    :param int max_retries: Max number of times to retry execution after a failed call
+    :param float delay: Number of seconds between successive calls of :code:`method`
+    :return: The results of running :code:`method`
+    """
+    tries = 0
+
+    with warn_only():
+        while tries < max_retries:
+            res = method()
+            if not res.failed:
+                return res
+
+            tries += 1
+            time.sleep(delay)
+    # final try outside the warn_only block so that if it
+    # fails it'll just blow up or do whatever it was going to
+    # do anyway.
+    return method()
 
 
 # pylint: disable=too-few-public-methods

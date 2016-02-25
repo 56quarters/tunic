@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
 import re
-
 import mock
 import tunic.core
 
@@ -211,6 +210,43 @@ def test_split_by_line_unix():
     assert ['foo', 'bar'] == tunic.core.split_by_line('foo\nbar')
     assert ['foo', 'bar'] == tunic.core.split_by_line(' foo\nbar ')
     assert ['foo', 'bar'] == tunic.core.split_by_line('foo \n bar')
+
+
+def test_try_repeatedly_no_failures():
+    res = StrDecorator("ok")
+    res.failed = False
+
+    meth = mock.Mock()
+    meth.return_value = res
+
+    assert "ok" == tunic.core.try_repeatedly(meth)
+
+
+def test_try_repeatedly_failure_and_retry():
+    res1 = StrDecorator()
+    res1.failed = True
+    res2 = StrDecorator("ok")
+    res2.failed = False
+
+    meth = mock.Mock()
+    meth.side_effect = [res1, res2]
+
+    assert "ok" == tunic.core.try_repeatedly(meth)
+
+
+def test_try_repeatedly_all_failures():
+    res1 = StrDecorator()
+    res1.failed = True
+    res2 = StrDecorator()
+    res2.failed = True
+    meth = mock.Mock()
+    # SystemExit here because that's what Fabric does when commands
+    # fail outside of the warn_only block. So, make sure that gets
+    # propagated when the final call fails.
+    meth.side_effect = [res1, res2, SystemExit(1)]
+
+    with pytest.raises(SystemExit):
+        tunic.core.try_repeatedly(meth, max_retries=2)
 
 
 def test_get_current_path():

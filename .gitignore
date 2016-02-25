@@ -3,6 +3,7 @@
 _build
 dist/
 env
+.env
 .project
 .pydevproject
 .settings
@@ -18,3 +19,4 @@ wheelhouse
 doc/build
 .hypothesis
 build
+.coverage

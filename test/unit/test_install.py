@@ -2,7 +2,6 @@
 
 import mock
 import pytest
-
 import tunic.core
 import tunic.install
 
@@ -153,7 +152,7 @@ class TestStaticFileInstallation(object):
             'mystaticsite/*', '/srv/www/myapp/releases/20141011145205')
 
 
-class TestLocalArtifactInstalltion(object):
+class TestLocalArtifactInstallation(object):
     def setup(self):
         self.runner = mock.Mock(spec=tunic.core.FabRunner)
 
@@ -200,6 +199,64 @@ class TestLocalArtifactInstalltion(object):
         self.runner.put.assert_called_once_with(
             '/tmp/someapp-1.2.3.jar',
             '/srv/www/myapp/releases/20141011145205')
+
+
+class TestHttpArtifactInstallation(object):
+    def setup(self):
+        self.runner = mock.Mock(spec=tunic.core.FabRunner)
+        self.downloader = mock.Mock()
+
+    def test_get_file_from_url_no_path(self):
+        url = 'https://www.example.com'
+        with pytest.raises(ValueError):
+            tunic.install.HttpArtifactInstallation._get_file_from_url(url)
+
+    def test_get_file_from_url_no_file(self):
+        url = 'https://www.example.com/'
+        with pytest.raises(ValueError):
+            tunic.install.HttpArtifactInstallation._get_file_from_url(url)
+
+    def test_get_file_from_url_1(self):
+        url = 'https://www.example.com/some/file.jar?dl=1'
+        assert 'file.jar' == tunic.install.HttpArtifactInstallation._get_file_from_url(url)
+
+    def test_get_file_from_url_2(self):
+        url = 'https://www.example.com/app.pex'
+        assert 'app.pex' == tunic.install.HttpArtifactInstallation._get_file_from_url(url)
+
+    def test_missing_base(self):
+        with pytest.raises(ValueError):
+            tunic.install.HttpArtifactInstallation('', 'http://www.example.com/foo.jar')
+
+    def test_missing_url(self):
+        with pytest.raises(ValueError):
+            tunic.install.HttpArtifactInstallation('/some/path', '')
+
+    def test_install_directory_does_not_exist(self):
+        self.runner.exists.return_value = False
+        installer = tunic.install.HttpArtifactInstallation(
+            '/srv/www/myapp', 'http://localhost/app-1.2.3.jar',
+            downloader=self.downloader, runner=self.runner)
+
+        installer.install('20160206111401')
+
+        self.runner.run.assert_called_once_with(
+            "mkdir -p '/srv/www/myapp/releases/20160206111401'")
+        self.downloader.assert_called_once_with(
+            'http://localhost/app-1.2.3.jar',
+            '/srv/www/myapp/releases/20160206111401/app-1.2.3.jar')
+
+    def test_install_rename_artifact(self):
+        self.runner.exists.return_value = True
+        installer = tunic.install.HttpArtifactInstallation(
+            '/srv/www/myapp', 'http://localhost/app-1.2.3.jar',
+            remote_name='app.jar', downloader=self.downloader, runner=self.runner)
+
+        installer.install('20160206111401')
+
+        self.downloader.assert_called_once_with(
+            'http://localhost/app-1.2.3.jar',
+            '/srv/www/myapp/releases/20160206111401/app.jar')
 
 
 class TestLocalArtifactTransfer(object):
