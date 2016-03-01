@@ -1,6 +1,13 @@
 Tunic
 =====
 
+.. image:: https://travis-ci.org/tshlabs/tunic.png?branch=master
+    :target: https://travis-ci.org/tshlabs/tunic
+
+.. image:: https://img.shields.io/pypi/v/tunic.svg
+    :target: https://pypi.python.org/pypi/tunic
+
+
 A Python library for deploying code on remote servers.
 
 Tunic is designed so that you can make use of as much or as little of
