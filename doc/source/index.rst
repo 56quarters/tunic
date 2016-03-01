@@ -11,10 +11,9 @@
 Tunic
 =====
 
-Tunic is a library built on Fabric for performing common tasks related
-to deploying a code base on multiple remote servers.
+A Python library for deploying code on remote servers.
 
-It's designed so that you can make use of as much or as little of
+Tunic is designed so that you can make use of as much or as little of
 its functionality as you'd like, the choice is yours.
 
 It only requires the Fabric library as a dependency and can be installed
