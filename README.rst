@@ -48,7 +48,7 @@ for more methods that can save you work in your deploy process.
 Documentation
 -------------
 
-The latest documentation is available at http://tunic.readthedocs.org/en/latest/
+The latest documentation is available at http://tunic.readthedocs.io/en/latest/
 
 Source
 ------
@@ -63,4 +63,4 @@ Python packages are available at https://pypi.python.org/pypi/tunic
 Changes
 -------
 
-The change log is available at http://tunic.readthedocs.org/en/latest/changes.html
+The change log is available at http://tunic.readthedocs.io/en/latest/changes.html
