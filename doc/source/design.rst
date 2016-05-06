@@ -35,7 +35,7 @@ For this example, let's assume you're deploying your project to ``/srv/www/myapp
                 |-- releases
                 |   +-- 20141105123145-0.2.0
                 |   +-- 20141002231442-0.1.0
-                +-- current
+                +-- current -> releases/20141105123145-0.2.0
 
 * The ``releases`` directory must be under your project base directory and be
   writeable by the user or group that deploys are being performed by.
