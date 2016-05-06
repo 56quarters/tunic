@@ -55,6 +55,8 @@ For this example, let's assume you're deploying your project to ``/srv/www/myapp
   :meth:`tunic.core.ReleaseManager.set_current_release` method as part of your
   deploy process.
 
+If you've used Capistrano, this structure should feel pretty `familiar <http://capistranorb.com/documentation/getting-started/structure/>`_ ;)
+  
 Dependence on Fabric
 --------------------
 
