@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+1.2.2 - 2016-05-06
+------------------
+* **Bug** - Fix bug where newer version of ``cryptography`` module being pulled in than
+  supported by the version of Fabric we depended on. Fixed by updating to Fabric 1.11.1.
+  Fixes `#5 <https://github.com/tshlabs/tunic/issues/5>`_.
+
 1.2.1 - 2016-02-25
 ------------------
 * **Bug** - Fix bug when running with older versions of Fabric that didn't define
