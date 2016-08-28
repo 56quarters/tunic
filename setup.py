@@ -12,7 +12,7 @@ import tunic
 DESCRIPTION = 'Deployment related Fabric utilities'
 AUTHOR = 'TSH Labs'
 EMAIL = 'projects@tshlabs.org'
-URL = 'http://www.tshlabs.org/'
+URL = 'https://github.com/tshlabs/tunic'
 LICENSE = 'MIT'
 CLASSIFIERS = [
     "Development Status :: 5 - Production/Stable",
