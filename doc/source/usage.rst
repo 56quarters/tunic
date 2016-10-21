@@ -274,7 +274,7 @@ HttpArtifactInstallation
 ------------------------
 
 The :class:`tunic.install.HttpArtifactInstallation` class is used to install
-a single local file (Go binary, Java JAR or WAR) on a remote server after downloading
+a single file (Go binary, Java JAR or WAR) on a remote server after downloading
 it from an HTTP or HTTPS URL. Optionally the artifact can be renamed when it is
 installed on the remote server.
 
