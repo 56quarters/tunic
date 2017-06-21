@@ -174,7 +174,10 @@ class TestLocalArtifactInstallation(object):
         self.runner.run.assert_called_once_with(
             "mkdir -p '/srv/www/myapp/releases/20141011145205'")
         self.runner.put.assert_called_once_with(
-            '/tmp/someapp-1.2.3.jar', '/srv/www/myapp/releases/20141011145205')
+            '/tmp/someapp-1.2.3.jar',
+            '/srv/www/myapp/releases/20141011145205',
+            mirror_local_mode=True
+        )
 
     def test_install_rename_artifact(self):
         self.runner.exists.return_value = True
@@ -186,7 +189,9 @@ class TestLocalArtifactInstallation(object):
 
         self.runner.put.assert_called_once_with(
             '/tmp/someapp-1.2.3.jar',
-            '/srv/www/myapp/releases/20141011145205/someapp.jar')
+            '/srv/www/myapp/releases/20141011145205/someapp.jar',
+            mirror_local_mode=True
+        )
 
     def test_install_do_not_rename(self):
         self.runner.exists.return_value = True
@@ -198,7 +203,9 @@ class TestLocalArtifactInstallation(object):
 
         self.runner.put.assert_called_once_with(
             '/tmp/someapp-1.2.3.jar',
-            '/srv/www/myapp/releases/20141011145205')
+            '/srv/www/myapp/releases/20141011145205',
+            mirror_local_mode=True
+        )
 
 
 class TestHttpArtifactInstallation(object):

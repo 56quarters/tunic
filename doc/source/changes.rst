@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.2.3 - 2017-06-20
+------------------
+* **Bug** - Fix bug where local permissions were not mirrored on the remote side when
+  using `LocalArtifactinstallation`.
+
 1.2.2 - 2016-05-06
 ------------------
 * **Bug** - Fix bug where newer version of ``cryptography`` module being pulled in than

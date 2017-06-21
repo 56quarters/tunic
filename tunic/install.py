@@ -279,7 +279,7 @@ class LocalArtifactInstallation(ProjectBaseMixin):
         else:
             destination = release_path
 
-        return self._runner.put(self._local_file, destination)
+        return self._runner.put(self._local_file, destination, mirror_local_mode=True)
 
 
 def download_url(url, destination, runner=None):
