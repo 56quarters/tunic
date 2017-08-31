@@ -59,6 +59,7 @@ PERMS_DIR_DEFAULT = 'u+rwx,g+rws,o+rx'
 RELEASE_DATE_FMT = '%Y%m%d%H%M%S'
 
 
+# pylint: disable=missing-docstring
 def _strip_all(parts):
     return [part.strip() for part in parts]
 
@@ -167,6 +168,7 @@ def get_release_id(version=None):
     :return: Unique name for this particular deployment
     :rtype: str
     """
+    # pylint: disable=invalid-name
     ts = datetime.utcnow().strftime(RELEASE_DATE_FMT)
 
     if version is None:
@@ -214,7 +216,7 @@ class FabRunner(object):
         return put(*args, **kwargs)
 
 
-def try_repeatedly(method, max_retries=1, delay=0):
+def try_repeatedly(method, max_retries=None, delay=None):
     """Execute the given Fabric call, retrying up to a certain number of times.
 
     The method is expected to be wrapper around a Fabric :func:`run` or :func:`sudo`
@@ -229,6 +231,8 @@ def try_repeatedly(method, max_retries=1, delay=0):
     :param float delay: Number of seconds between successive calls of :code:`method`
     :return: The results of running :code:`method`
     """
+    max_retries = max_retries if max_retries is not None else 1
+    delay = delay if delay is not None else 0
     tries = 0
 
     with warn_only():

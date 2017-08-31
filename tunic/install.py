@@ -262,6 +262,8 @@ class LocalArtifactInstallation(ProjectBaseMixin):
         the standard Tunic directory structure (see :doc:`design`).
 
         :param str release_id: Timestamp-based identifier for this deployment.
+        :param int retries: Max number of times to retry downloads after a failure
+        :param float retry_delay: Number of seconds between download retries
         :return: The results of the ``put`` command using Fabric. This return
             value is an iterable of the paths of all files uploaded on the remote
             server.
@@ -282,7 +284,7 @@ class LocalArtifactInstallation(ProjectBaseMixin):
         return self._runner.put(self._local_file, destination, mirror_local_mode=True)
 
 
-def download_url(url, destination, runner=None):
+def download_url(url, destination, retries=None, retry_delay=None, runner=None):
     """Download the given URL with wget to the provided path. The command is
     run via Fabric on the current remote machine. Therefore, the destination
     path should be for the remote machine.
@@ -290,12 +292,17 @@ def download_url(url, destination, runner=None):
     :param str url: URL to download onto the remote machine
     :param str destination: Path to download the URL to on the remote
         machine
+    :param int retries: Max number of times to retry downloads after a failure
+    :param float retry_delay: Number of seconds between download retries
     :param FabRunner runner: Optional runner to use for executing commands.
     :return: The results of the wget call
     """
     runner = runner if runner is not None else FabRunner()
     return try_repeatedly(
-        lambda: runner.run("wget --quiet --output-document '{0}' '{1}'".format(destination, url)))
+        lambda: runner.run("wget --quiet --output-document '{0}' '{1}'".format(destination, url)),
+        max_retries=retries,
+        delay=retry_delay
+    )
 
 
 class HttpArtifactInstallation(ProjectBaseMixin):
@@ -311,13 +318,15 @@ class HttpArtifactInstallation(ProjectBaseMixin):
     new instance of this installer by providing an alternate implementation. The
     download method is expected to conform to the following interface.
 
-    >>> def download(url, destination):
+    >>> def download(url, destination, retries=None, retry_delay=None):
     ...     pass
 
-    Where ``url`` is a URL to the artifact that should be downloaded and ``destination``
+    Where ``url`` is a URL to the artifact that should be downloaded, ``destination``
     is the absolute path on the remote machine that the artifact should be downloaded
-    to. The function should return the result of the Fabric command run
-    (e.g. calling 'curl' or 'wget' with :func:`fabric.api.run`).
+    to, ``retries`` is the number of download attempts made after a failure, and
+    ``retry_delay`` is the number of seconds between retries. The function should return
+    the result of the Fabric command run(e.g. calling 'curl' or 'wget' with
+    :func:`fabric.api.run`).
 
     If the remote release directory does not already exist, it will be
     created during the install process.
@@ -328,7 +337,12 @@ class HttpArtifactInstallation(ProjectBaseMixin):
     .. versionadded:: 1.2.0
     """
 
-    def __init__(self, base, artifact_url, remote_name=None, downloader=None, runner=None):
+    _default_retries = 1
+    _default_retry_delay = 0
+
+    # pylint: disable=too-many-arguments
+    def __init__(self, base, artifact_url, remote_name=None, retries=None, retry_delay=None,
+                 downloader=None, runner=None):
         """Set the project base directory on the remote server, URL to the artifact
         that should be installed remotely, and optional file name to rename the artifact
         to on the remote server.
@@ -342,6 +356,10 @@ class HttpArtifactInstallation(ProjectBaseMixin):
             always be called 'application.jar' on the remote server but might
             be named differently ('application-1.2.3.jar') locally, you would
             specify ``remote_name='application.jar'`` for this parameter.
+        :param int retries: Max number of times to retry downloads after a failure. Default
+            is to retry once after a failure.
+        :param float retry_delay: Number of seconds between download retries. Default is not
+            to wait between a failure and subsequent retry.
         :param callable downloader: Function to download the artifact with the
             interface specified above. This is primarily for unit testing but
             may be useful for users that need to be able to customize how the
@@ -350,6 +368,9 @@ class HttpArtifactInstallation(ProjectBaseMixin):
             remote and local commands to perform the installation.
         :raises ValueError: If the base directory or artifact URL isn't
             specified.
+
+        .. versionchanged:: 1.3.0
+            Added the ``retries`` and ``retry_delay`` parameters
         """
         super(HttpArtifactInstallation, self).__init__(base)
 
@@ -358,6 +379,8 @@ class HttpArtifactInstallation(ProjectBaseMixin):
 
         self._artifact_url = artifact_url
         self._remote_name = remote_name
+        self._retries = retries if retries is not None else self._default_retries
+        self._retry_delay = retry_delay if retry_delay is not None else self._default_retry_delay
         self._downloader = downloader if downloader is not None else download_url
         self._runner = runner if runner is not None else FabRunner()
 
@@ -404,7 +427,12 @@ class HttpArtifactInstallation(ProjectBaseMixin):
         # method. If we were testing class, we'd mock out the download method
         # anyway. So, it's not part of the public API of the download interface
         # and we don't deal with it here.
-        return self._downloader(self._artifact_url, destination)
+        return self._downloader(
+            self._artifact_url,
+            destination,
+            retries=self._retries,
+            retry_delay=self._retry_delay
+        )
 
 
 # pylint: disable=too-few-public-methods

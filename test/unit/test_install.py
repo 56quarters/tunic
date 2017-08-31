@@ -243,27 +243,36 @@ class TestHttpArtifactInstallation(object):
         self.runner.exists.return_value = False
         installer = tunic.install.HttpArtifactInstallation(
             '/srv/www/myapp', 'http://localhost/app-1.2.3.jar',
-            downloader=self.downloader, runner=self.runner)
+            retries=2, retry_delay=1.0, downloader=self.downloader,
+            runner=self.runner)
 
         installer.install('20160206111401')
 
         self.runner.run.assert_called_once_with(
             "mkdir -p '/srv/www/myapp/releases/20160206111401'")
+
         self.downloader.assert_called_once_with(
             'http://localhost/app-1.2.3.jar',
-            '/srv/www/myapp/releases/20160206111401/app-1.2.3.jar')
+            '/srv/www/myapp/releases/20160206111401/app-1.2.3.jar',
+            retries=2,
+            retry_delay=1.0
+        )
 
     def test_install_rename_artifact(self):
         self.runner.exists.return_value = True
         installer = tunic.install.HttpArtifactInstallation(
             '/srv/www/myapp', 'http://localhost/app-1.2.3.jar',
-            remote_name='app.jar', downloader=self.downloader, runner=self.runner)
+            remote_name='app.jar', retries=2, retry_delay=1.0, downloader=self.downloader,
+            runner=self.runner)
 
         installer.install('20160206111401')
 
         self.downloader.assert_called_once_with(
             'http://localhost/app-1.2.3.jar',
-            '/srv/www/myapp/releases/20160206111401/app.jar')
+            '/srv/www/myapp/releases/20160206111401/app.jar',
+            retries=2,
+            retry_delay=1.0
+        )
 
 
 class TestLocalArtifactTransfer(object):
