@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.3.0 - 2017-08-31
+------------------
+* Add retry settings to :class:`tunic.install.HttpArtifactInstallation` to allow more
+  robust deploys over unreliable networks. Fixes `#8 <https://github.com/tshlabs/tunic/issues/8>`_.
+
 1.2.3 - 2017-06-20
 ------------------
 * **Bug** - Fix bug where local permissions were not mirrored on the remote side when
