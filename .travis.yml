@@ -8,6 +8,8 @@ matrix:
       env: TOXENV=py27,fab-1.4,fuzz
     - python: pypy
       env: TOXENV=pypy,fab-1.4,fuzz
+  allow_failures:
+    - python: pypy
 
 branches:
   only:
